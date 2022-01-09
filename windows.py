@@ -21,32 +21,144 @@ class MainWindow(Sg.Window):
         self.theme = APP_SETTINGS['theme']
         self.title = APP_SETTINGS['title']
         self.win_size = (APP_SETTINGS['width'], APP_SETTINGS['height'])
-        self.dds_tab = DDSTab()
+        # self.dds_tab = DDSTab()
         self.mea_tab = MEASTab()
-        self.adc_tab = ADCTab()
-        self.layout = [[Sg.TabGroup([[self.dds_tab], [self.mea_tab], [self.adc_tab]]), ],
-                       [Log()]]
+        # self.adc_tab = ADCTab()
+        self.hardware_tab = HardwareTab()
+        self.layout = [
+            [Sg.TabGroup([
+                [self.hardware_tab],
+                # [self.dds_tab],
+                [self.mea_tab],
+                # [self.adc_tab],
+            ]),
+            ],
+            [Log()]
+        ]
 
         self.window = Sg.Window.__init__(self, title=self.title, layout=self.layout, size=self.win_size, resizable=True,
-                           grab_anywhere=True, keep_on_top=True, finalize=True)
+                                         grab_anywhere=True, keep_on_top=True, finalize=True)
 
 
-class DDSTab(Sg.Tab):
-    def __init__(self, *args, **kwargs):
+class HardwareTab(Sg.Tab):
+    def __init__(self):
+        # _DDS_DES_COL = Sg.Column([
+        #     [Sg.Text('Channel Frequencies', size=(20, 1))],
+        #     [Sg.Text('Channel Amplitudes', size=(20, 1))],
+        #     [Sg.Text('Channel Dividers', size=(20, 1))],
+        #     [Sg.Text('Channel Phases', size=(20, 1))],
+        #     # [Sg.Button('States', size=(20, 1), key='-ST-')],
+        # ])
+        #
+        # _DDS_CHN_COL_0 = Sg.Column([
+        #     [Sg.Text('RF (MHz)', size=(10, 1)),
+        #      Sg.InputText(default_text=DDS_SETTINGS['RF'],
+        #                   size=(5, 1), justification='left', key='RF')],
+        #     [Sg.Text('Channel 0', size=(10, 1)),
+        #      Sg.InputText(default_text=DDS_SETTINGS['channelAmplitudes'][0],
+        #                   size=(5, 1), justification='left', enable_events=True, key='CH_0_AMP')],
+        #     [Sg.Text('Channel 0', size=(10, 1)),
+        #      Sg.Combo([1, 2, 4, 8], default_value=DDS_SETTINGS['channelDividers'][0],
+        #               size=(5, 5), enable_events=True, key='CH_0_DIV')],
+        #     [Sg.Text('Channel 0', size=(10, 1)),
+        #      Sg.InputText(default_text=DDS_SETTINGS['channelPhases'][0],
+        #                   size=(5, 1), enable_events=False, key='CH_0_PHA')],
+        #     # [Sg.Button('Amplitudes', enable_events=True, key='-amplitudes-')]
+        # ])
+        # _DDS_CHN_COL_1 = Sg.Column([
+        #     [Sg.Text('IF (kHz)', size=(10, 1)),
+        #      Sg.InputText(default_text=DDS_SETTINGS['IF'],
+        #                   size=(5, 1), justification='left', key='IF')],
+        #     [Sg.Text('Channel 1', size=(10, 1)),
+        #      Sg.InputText(default_text=DDS_SETTINGS['channelAmplitudes'][1],
+        #                   size=(5, 1), justification='left', enable_events=True, key='CH_1_AMP')],
+        #     [Sg.Text('Channel 1', size=(10, 1)),
+        #      Sg.Combo([1, 2, 4, 8], default_value=DDS_SETTINGS['channelDividers'][1],
+        #               size=(5, 5), enable_events=True, key='CH_1_DIV')],
+        #     [Sg.Text('Channel 1', size=(10, 1)),
+        #      Sg.InputText(default_text=DDS_SETTINGS['channelPhases'][1],
+        #                   size=(5, 1), enable_events=False, key='CH_1_PHA')],
+        #     # [Sg.Button('Frequencies', enable_events=True, key='-freqs-')]
+        # ])
+        # _DDS_CHN_COL_2 = Sg.Column([
+        #     [Sg.Text('PLL Multi', size=(10, 1)),
+        #      Sg.Combo([x for x in range(4, 21)], default_value=DDS_SETTINGS['PLL_MUL'],
+        #               size=(5, 5), enable_events=True, key='PLL_MUL')],
+        #     [Sg.Text('Channel 2', size=(10, 1)),
+        #      Sg.InputText(default_text=DDS_SETTINGS['channelAmplitudes'][2],
+        #                   size=(5, 1), justification='left', enable_events=True, key='CH_2_AMP')],
+        #     [Sg.Text('Channel 2', size=(10, 1)),
+        #      Sg.Combo([1, 2, 4, 8], default_value=DDS_SETTINGS['channelDividers'][2],
+        #               size=(5, 5), enable_events=True, key='CH_2_DIV')],
+        #     [Sg.Text('Channel 2', size=(10, 1)),
+        #      Sg.InputText(default_text=DDS_SETTINGS['channelPhases'][2],
+        #                   size=(5, 1), enable_events=False, key='CH_2_PHA')],
+        #     # [Sg.Button('Phases', enable_events=True, key='-phases-')]
+        # ])
+        # _DDS_CHN_COL_3 = Sg.Column([
+        #     [Sg.Text('', size=(10, 1))],
+        #     [Sg.Text('Channel 3', size=(10, 1)),
+        #      Sg.InputText(default_text=DDS_SETTINGS['channelAmplitudes'][3],
+        #                   size=(5, 1), justification='left', enable_events=True, key='CH_3_AMP')],
+        #     [Sg.Text('Channel 3', size=(10, 1)),
+        #      Sg.Combo([1, 2, 4, 8], default_value=DDS_SETTINGS['channelDividers'][3],
+        #               size=(5, 5), enable_events=True, key='CH_3_DIV')],
+        #     [Sg.Text('Channel 3', size=(10, 1)),
+        #      Sg.InputText(default_text=DDS_SETTINGS['channelPhases'][3],
+        #                   size=(5, 1), enable_events=False, key='CH_3_PHA')],
+        #     # [Sg.Button('Dividers', enable_events=True, key='-dividers-')]
+        # ])
+        #
+        # _DDS_CHN_COL = Sg.Column([
+        #     [_DDS_CHN_COL_0,
+        #      _DDS_CHN_COL_1,
+        #      _DDS_CHN_COL_2,
+        #      _DDS_CHN_COL_3]
+        # ])
+        #
+        # _DDS_PDR_COL = Sg.Column([
+        #     # [Sg.Text()],
+        #     [Sg.Checkbox('Power Down', default=False,
+        #                  size=(10, 1), enable_events=True, key='DDS_PDWN')],
+        #     [Sg.Checkbox('SYNC CLK', default=True,
+        #                  size=(10, 1), enable_events=True, key='SYNC_CLK')],
+        #     [Sg.Text()],
+        #     # [Sg.Text()],
+        #     [Sg.Button('Load', size=(5, 1), enable_events=True, key='DDS_LOAD', auto_size_button=False),
+        #      Sg.Button('Read', size=(5, 1), enable_events=True, key='DDS_READ')],
+        #     [Sg.Button('Load Default Settings', key='DDS_DEFAULTS')]
+        # ])
+        #
+        # dds_frame_layout = [
+        #     _DDS_DES_COL,
+        #     _DDS_CHN_COL,
+        #     _DDS_PDR_COL,
+        #
+        # ]
+        # dds_frame = DDSFrame()
 
+        self.win_layout = [
+            [DDSFrame()],
+            [ADCFrame()],
+        ]
+        self.layout_keys = ['RF', 'IF',
+                            'CH_0_AMP', 'CH_1_AMP', 'CH_2_AMP', 'CH_3_AMP',
+                            'CH_0_DIV', 'CH_1_DIV', 'CH_2_DIV', 'CH_3_DIV',
+                            'CH_0_PHA', 'CH_1_PHA', 'CH_2_PHA', 'CH_3_PHA',
+                            'PLL_MUL', 'DDS_PDWN', 'SYNC_CLK']
+        # self.win_layout = [[_DDS_DES_COL, _DDS_CHN_COL, _DDS_PDR_COL]]
+
+        Sg.Tab.__init__(self, title='Hardware Details', layout=self.win_layout)
+
+
+class DDSFrame(Sg.Frame):
+    def __init__(self):
         _DDS_DES_COL = Sg.Column([
             [Sg.Text('Channel Frequencies', size=(20, 1))],
             [Sg.Text('Channel Amplitudes', size=(20, 1))],
             [Sg.Text('Channel Dividers', size=(20, 1))],
             [Sg.Text('Channel Phases', size=(20, 1))],
-            [Sg.Button('States', size=(20, 1), key='-ST-')],
-        ])
-
-        _DDS_BUT_COL = Sg.Column([
-            [Sg.Button('Set Frequencies', size=(15, 1), enable_events=True, key='DDS_SET_FREQ')],
-            [Sg.Button('Set Amplitudes', size=(15, 1), enable_events=True, key='DDS_SET_AMP')],
-            [Sg.Button(size=(15, 1))],
-            [Sg.Button('Set Phases', size=(15, 1), enable_events=True, key='DDS_SET_PHA')]
+            # [Sg.Button('States', size=(20, 1), key='-ST-')],
         ])
 
         _DDS_CHN_COL_0 = Sg.Column([
@@ -62,7 +174,7 @@ class DDSTab(Sg.Tab):
             [Sg.Text('Channel 0', size=(10, 1)),
              Sg.InputText(default_text=DDS_SETTINGS['channelPhases'][0],
                           size=(5, 1), enable_events=False, key='CH_0_PHA')],
-            [Sg.Button('Amplitudes', enable_events=True, key='-amplitudes-')]
+            # [Sg.Button('Amplitudes', enable_events=True, key='-amplitudes-')]
         ])
         _DDS_CHN_COL_1 = Sg.Column([
             [Sg.Text('IF (kHz)', size=(10, 1)),
@@ -77,7 +189,7 @@ class DDSTab(Sg.Tab):
             [Sg.Text('Channel 1', size=(10, 1)),
              Sg.InputText(default_text=DDS_SETTINGS['channelPhases'][1],
                           size=(5, 1), enable_events=False, key='CH_1_PHA')],
-            [Sg.Button('Frequencies', enable_events=True, key='-freqs-')]
+            # [Sg.Button('Frequencies', enable_events=True, key='-freqs-')]
         ])
         _DDS_CHN_COL_2 = Sg.Column([
             [Sg.Text('PLL Multi', size=(10, 1)),
@@ -92,7 +204,7 @@ class DDSTab(Sg.Tab):
             [Sg.Text('Channel 2', size=(10, 1)),
              Sg.InputText(default_text=DDS_SETTINGS['channelPhases'][2],
                           size=(5, 1), enable_events=False, key='CH_2_PHA')],
-            [Sg.Button('Phases', enable_events=True, key='-phases-')]
+            # [Sg.Button('Phases', enable_events=True, key='-phases-')]
         ])
         _DDS_CHN_COL_3 = Sg.Column([
             [Sg.Text('', size=(10, 1))],
@@ -105,7 +217,7 @@ class DDSTab(Sg.Tab):
             [Sg.Text('Channel 3', size=(10, 1)),
              Sg.InputText(default_text=DDS_SETTINGS['channelPhases'][3],
                           size=(5, 1), enable_events=False, key='CH_3_PHA')],
-            [Sg.Button('Dividers', enable_events=True, key='-dividers-')]
+            # [Sg.Button('Dividers', enable_events=True, key='-dividers-')]
         ])
 
         _DDS_CHN_COL = Sg.Column([
@@ -116,50 +228,52 @@ class DDSTab(Sg.Tab):
         ])
 
         _DDS_PDR_COL = Sg.Column([
-            [Sg.Text()],
+            # [Sg.Text()],
             [Sg.Checkbox('Power Down', default=False,
                          size=(10, 1), enable_events=True, key='DDS_PDWN')],
             [Sg.Checkbox('SYNC CLK', default=True,
                          size=(10, 1), enable_events=True, key='SYNC_CLK')],
             [Sg.Text()],
-            [Sg.Text()],
+            # [Sg.Text()],
             [Sg.Button('Load', size=(5, 1), enable_events=True, key='DDS_LOAD', auto_size_button=False),
              Sg.Button('Read', size=(5, 1), enable_events=True, key='DDS_READ')],
             [Sg.Button('Load Default Settings', key='DDS_DEFAULTS')]
         ])
 
-        self.win_layout = [[_DDS_DES_COL, _DDS_CHN_COL, _DDS_PDR_COL]]
-        self.layout_keys = ['RF', 'IF',
-                            'CH_0_AMP', 'CH_1_AMP', 'CH_2_AMP', 'CH_3_AMP',
-                            'CH_0_DIV', 'CH_1_DIV', 'CH_2_DIV', 'CH_3_DIV',
-                            'CH_0_PHA', 'CH_1_PHA', 'CH_2_PHA', 'CH_3_PHA',
-                            'PLL_MUL', 'DDS_PDWN', 'SYNC_CLK']
+        self.win_layout = [
+            [
+            _DDS_DES_COL,
+            _DDS_CHN_COL,
+            _DDS_PDR_COL,
+            ]
+        ]
 
-        Sg.Tab.__init__(self, title='DDS Details', layout=self.win_layout)
+        Sg.Frame.__init__(self, title='DDS', layout=self.win_layout)
 
 
-class ADCTab(Sg.Tab):
-    def __init__(self, *args, **kwargs):
-
+class ADCFrame(Sg.Frame):
+    def __init__(self):
+        _ADC_COL_0 = Sg.Column([
+            [Sg.Text('')],
+            [Sg.Text('Range')],
+        ])
         _ADC_COL_1 = Sg.Column([
-            [Sg.Text()],
             [Sg.Text('ADC 1', size=(10, 1))],
-            [Sg.Text('ADC 2', size=(10, 1))],
+            [Sg.Combo([u'\u00B1 12.288 V', u'\u00B1 10.24 V', u'\u00B1 6.144 V', u'\u00B1 5.12 V', u'\u00B1 2.56 V',
+                       '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V', '0-2.56 V'],
+                      default_value=ADC_SETTINGS['range'][0], enable_events=True, key='ADC_1_RANGE')],
+            [Sg.Button('Reset', size=(10, 1), key='ADC_1_RESET')],
         ])
         _ADC_COL_2 = Sg.Column([
-            [Sg.Text('Range', size=(20, 1))],
+            [Sg.Text('ADC 2', size=(20, 1))],
             [Sg.Combo([u'\u00B1 12.288 V', u'\u00B1 10.24 V', u'\u00B1 6.144 V', u'\u00B1 5.12 V', u'\u00B1 2.56 V',
                        '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V', '0-2.56 V'],
-                      default_value=ADC_SETTINGS['range'][0],
-                      enable_events=True, key='ADC_1_RANGE')],
-            [Sg.Combo([u'\u00B1 12.288 V', u'\u00B1 10.24 V', u'\u00B1 6.144 V', u'\u00B1 5.12 V', u'\u00B1 2.56 V',
-                       '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V', '0-2.56 V'],
-                      default_value=ADC_SETTINGS['range'][1],
-                      enable_events=True, key='ADC_2_RANGE')],
+                      default_value=ADC_SETTINGS['range'][0], enable_events=True, key='ADC_1_RANGE')],
+            [Sg.Button('Reset', size=(10, 1), key='ADC_2_RESET')],
         ])
 
-        self.win_layout = [[_ADC_COL_1, _ADC_COL_2]]
-        Sg.Tab.__init__(self, title='ADC Details', layout=self.win_layout)
+        self.win_layout = [[_ADC_COL_0, _ADC_COL_1, Sg.VerticalSeparator(), _ADC_COL_2]]
+        Sg.Frame.__init__(self, title='ADC', layout=self.win_layout)
 
 
 class MEASTab(Sg.Tab):

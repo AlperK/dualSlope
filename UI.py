@@ -27,37 +27,12 @@ def event_values(app, event, values):
     if event == Sg.WIN_CLOSED:
         return -1
 
-    elif event == 'FILL':
-        fill_ele(app.R1, app['-GRAPH-'], 'deepskyblue')
-
-    elif event == 'UNFILL':
-        unfill_ele(app.R1, app['-GRAPH-'])
-
-    elif event == '-amplitudes-':
-        app.dds.read_amplitude(0)
-
-    elif event == '-freqs-':
-        a = app.dds.get_frequency()
-        print(a)
-
-    elif event == '-phases-':
-        a = app.dds.get_phase()
-        print(a)
-
-    elif event == '-dividers-':
-        a = app.dds.get_current()
-        print(a)
-
     elif event == 'DDS_PDWN':
         print(values['DDS_PDWN'])
         if values['DDS_PDWN']:
             app.dds.shutdown()
         else:
             app.dds.wake_up()
-
-    elif event == '-ST-':
-        print(_VARS['DDS_SETTINGS'])
-        # app.dds.get_state()
 
     elif event in ['CH_0_AMP_Enter', 'CH_1_AMP_Enter', 'CH_2_AMP_Enter', 'CH_3_AMP_Enter']:
         channel = int(event[3])
@@ -137,6 +112,12 @@ def event_values(app, event, values):
     elif event == 'DDS_DEFAULTS':
         funcs.load_defaults(app.dds, _VARS, window=app)
         funcs.update_event_log('Default DDS settings are loaded.', _VARS, app)
+
+    elif event in ['ADC_1_RESET', 'ADC_2_RESET']:
+        channel = int(event[4])
+        demod = getattr(app, f'Demodulator{channel}')
+        adc = getattr(demod, f'ADC')
+        adc.reset()
 
     elif event == 'MEAS_START':
         MEA_SETTINGS['measurementStarted'] = True
