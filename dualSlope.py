@@ -2,10 +2,9 @@ import UI
 import RPi.GPIO as GPIO
 
 # TODO
-# In the lab, see if changing the order of set_freqmult() and set_refclock in funcs.py distorts the channels.
 # See if dds.shutdown() and dds.wake_up() works.
-# Implement update_fills()
-# Look up the GPIO pin numbers for the lasers
+# Find a smart way to trim the 'measurement conditions.json'
+# Think about a good structure for the final csv file contains the measurement results
 
 GPIO.setmode(GPIO.BOARD)
 app = UI.MainApplication()

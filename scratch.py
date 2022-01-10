@@ -1,14 +1,24 @@
-import csv
+import json
 
 
-fields = ['RF', 'IF', 'Amplitudes']
+with open('settings.json', 'r') as f:
+    settings = json.load(f)
+    APP_SETTINGS = settings['APP_SETTINGS']
+    DDS_SETTINGS = settings['DDS_SETTINGS']
+    ADC_SETTINGS = settings['ADC_SETTINGS']
+    MEA_SETTINGS = settings['MEA_SETTINGS']
+    LAS_SETTINGS = settings['LAS_SETTINGS']
+    PIN_SETTINGS = settings['PIN_SETTINGS']
 
-data = [95e6+1e3, 1e3, [0.5, 0.6, 0.45, 0.45], [0, 90, 0, 180]]
 
-filename = 'test.csv'
+fileName = 'measurement conditions.json'
 
-with open(filename, 'w') as csvfile:
-    csvwriter = csv.writer(csvfile)
 
-    csvwriter.writerow(fields)
-    csvwriter.writerow(data)
+measurement_conditions = {}
+measurement_conditions.update(DDS_SETTINGS)
+measurement_conditions.update(ADC_SETTINGS)
+
+print(measurement_conditions)
+
+with open('measurement conditions.json', 'w') as f:
+    json.dump(measurement_conditions, f)

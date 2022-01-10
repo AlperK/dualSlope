@@ -27,7 +27,7 @@ adc_settings = {
 mea_settings = {
     'canvasSize': (200, 100),
     'measurementFileName': '',
-    'laserOnTime': 1000e-3,
+    'laserOnTime': 1000,
     'measurementStarted': False,
     'justStarted': False,
     'activeLaser': None,
@@ -35,7 +35,7 @@ mea_settings = {
 }
 
 las_settings = {
-    'laserPins': [13, 10, 15, 16],
+    'laserPins': [10, 13, 15, 16],
 }
 
 pin_settings = {

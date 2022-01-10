@@ -61,16 +61,12 @@ def event_values(app, event, values):
 
     elif event in ['RF_Enter', 'IF_Enter']:
         funcs.set_rf_if(r_f=float(values['RF']), i_f=float(values['IF']), dds=app.dds)
-        print()
-        print(app.dds.read_frequency(0))
-        print(app.dds.read_frequency(1))
 
         check_0 = 0.99*(float(values['RF'])*1e6 + float(values['IF'])*1e3) < app.dds.read_frequency(0) < 1.01*(float(values['RF'])*1e6 + float(values['IF'])*1e3)
         check_1 = 0.99*(float(values['RF'])*1e6 + float(values['IF'])*1e3) < app.dds.read_frequency(1) < 1.01*(float(values['RF'])*1e6 + float(values['IF'])*1e3)
         check_2 = 0.99*(float(values['RF'])*1e6) < app.dds.read_frequency(2) < 1.01*(float(values['RF'])*1e6 + float(values['IF'])*1e3)
         check_3 = 0.99*(float(values['RF'])*1e6) < app.dds.read_frequency(3) < 1.01*(float(values['RF'])*1e6 + float(values['IF'])*1e3)
 
-        print(check_0, check_1, check_2, check_3)
         if check_0 and check_1 and check_2 and check_3:
             update_vars('DDS_SETTINGS', 'RF', values['RF'])
             update_vars('DDS_SETTINGS', 'IF', values['IF'])
@@ -93,11 +89,12 @@ def event_values(app, event, values):
                                _VARS, app)
 
     elif event in ['MEAS_NAME', 'MEAS_NUM']:
-        print(Path.joinpath(Path(values['MEAS_LOC']), Path(values['MEAS_DATE']), Path(values['MEAS_NAME']), Path(values['MEAS_NUM'])))
+        update_vars('MEA_SETTINGS', 'measurementFileName',
+                    str(Path.joinpath(Path(values['MEAS_LOC']), Path(values['MEAS_DATE']),
+                                  Path(values['MEAS_NAME']), Path(values['MEAS_NUM']))))
 
     elif event == "MEAS_FILE":
         print(MEA_SETTINGS['measurementFileName'])
-        print(Sg.theme_element_background_color())
 
     elif event == 'PLL_MUL':
         app.dds.set_freqmult(int(values[event]), ioupdate=True)
@@ -119,9 +116,16 @@ def event_values(app, event, values):
         adc = getattr(demod, f'ADC')
         adc.reset()
 
+    elif event == 'SW_TIME':
+        MEA_SETTINGS['laserOnTime'] = int(values[event])*1e-3
+        app.Demodulator1.laser_on_time = MEA_SETTINGS['laserOnTime']
+        app.Demodulator2.laser_on_time = MEA_SETTINGS['laserOnTime']
+        update_vars('MEA_SETTINGS', 'laserOnTime', int(values[event])*1e-3)
+
     elif event == 'MEAS_START':
         MEA_SETTINGS['measurementStarted'] = True
         MEA_SETTINGS['justStarted'] = True
+        funcs.save_measurement_settings(_VARS)
 
     elif event == 'MEAS_STOP':
         MEA_SETTINGS['measurementStarted'] = False
@@ -177,11 +181,13 @@ class MainApplication(windows.MainWindow):
 
         self.ADC1 = ADS8685.ADS8685(bus=0, device=0, reset_pin=PIN_SETTINGS['adc_rst_1'])
         self.ADC1.set_range(0b100)
-        self.Demodulator1 = Demodulator.Demodulator(self.ADC1, PIN_SETTINGS['amp_pha_1'], MEA_SETTINGS['laserOnTime'])
+        self.Demodulator1 = Demodulator.Demodulator(self.ADC1, PIN_SETTINGS['amp_pha_1'],
+                                                    MEA_SETTINGS['laserOnTime']*1e-3)
 
         self.ADC2 = ADS8685.ADS8685(bus=0, device=1, reset_pin=PIN_SETTINGS['adc_rst_2'])
         self.ADC2.set_range(0b100)
-        self.Demodulator2 = Demodulator.Demodulator(self.ADC2, PIN_SETTINGS['amp_pha_2'], MEA_SETTINGS['laserOnTime'])
+        self.Demodulator2 = Demodulator.Demodulator(self.ADC2, PIN_SETTINGS['amp_pha_2'],
+                                                    MEA_SETTINGS['laserOnTime']*1e-3)
 
         self.R0 = self["-GRAPH-"].draw_rectangle((60, 40), (80, 60),
                                                  fill_color='deepskyblue', line_color='darkslateblue')

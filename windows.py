@@ -5,6 +5,7 @@ import datetime
 
 with open('defaults.json', 'r') as f:
     settings = json.load(f)
+    print(type(settings))
     APP_SETTINGS = settings['APP_SETTINGS']
     DDS_SETTINGS = settings['DDS_SETTINGS']
     ADC_SETTINGS = settings['ADC_SETTINGS']
@@ -209,10 +210,12 @@ class MEASTab(Sg.Tab):
                                          default_date_m_d_y=(1, None, 2022)),
                        Sg.Button('File Name', key='MEAS_FILE')
                        ]
-        _MEAS_ROW_4 = [Sg.Text('Switching Period (ms):', size=(30, 1)), Sg.InputText(key='SW_TIME', enable_events=True)]
+        _MEAS_ROW_4 = [Sg.Text('_'*150)]
+        _MEAS_ROW_5 = [Sg.Text('Switching Period (ms):', size=(30, 1)),
+                       Sg.InputText(key='SW_TIME', default_text=MEA_SETTINGS['laserOnTime'], enable_events=True)]
 
         _MEAS_COL_2 = Sg.Column(
-            [_MEAS_ROW_1, _MEAS_ROW_2, _MEAS_ROW_3]
+            [_MEAS_ROW_1, _MEAS_ROW_2, _MEAS_ROW_3, _MEAS_ROW_4, _MEAS_ROW_5]
         )
         _MEAS_COL_1 = Sg.Column([
             [graph, amp_matrix]

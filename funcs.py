@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import json
 import datetime
 import time
+from pathlib import Path as Path
 import AD9959_v2
 import ADS8685
 
@@ -108,8 +109,6 @@ def load_defaults(device, var_dict, window):
         window['IF'].update(value=dds_settings_def['IF'])
         window['PLL_MUL'].update(value=dds_settings_def['PLL_MUL'])
 
-
-        # vars['DDS_SETTINGS'] = dds_settings_def
     else:
         print('Is not instance.')
 
@@ -178,3 +177,18 @@ def demodulator_count_generator():
             i = init()
         else:
             num += 1
+
+
+def save_measurement_settings(var_dict):
+    saved_settings = {}
+
+    saved_settings.update(var_dict['DDS_SETTINGS'])
+    saved_settings.update(var_dict['ADC_SETTINGS'])
+    saved_settings.update(var_dict['MEA_SETTINGS'])
+
+    json_file = Path.joinpath(Path(var_dict['MEA_SETTINGS']['measurementFileName']), Path('measurement conditions.json'))
+
+    Path(var_dict['MEA_SETTINGS']['measurementFileName']).mkdir(parents=True, exist_ok=True)
+
+    with json_file.open(mode='w') as file:
+        json.dump(saved_settings, file)
