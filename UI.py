@@ -5,7 +5,7 @@ import windows
 import funcs
 import json
 from pathlib import Path as Path
-import time
+import csv
 
 
 with open('settings.json', 'r') as f:
@@ -91,7 +91,7 @@ def event_values(app, event, values):
     elif event in ['MEAS_NAME', 'MEAS_NUM']:
         update_vars('MEA_SETTINGS', 'measurementFileName',
                     str(Path.joinpath(Path(values['MEAS_LOC']), Path(values['MEAS_DATE']),
-                                  Path(values['MEAS_NAME']), Path(values['MEAS_NUM']))))
+                                      Path(values['MEAS_NAME']), Path(values['MEAS_NUM']))))
 
     elif event == "MEAS_FILE":
         print(MEA_SETTINGS['measurementFileName'])
@@ -117,19 +117,34 @@ def event_values(app, event, values):
         adc.reset()
 
     elif event == 'SW_TIME':
-        MEA_SETTINGS['laserOnTime'] = int(values[event])*1e-3
+        if not values[event] == '':
+            MEA_SETTINGS['laserOnTime'] = int(values[event])*1e-3
+        else:
+            MEA_SETTINGS['laserOnTime'] = 0
         app.Demodulator1.laser_on_time = MEA_SETTINGS['laserOnTime']
         app.Demodulator2.laser_on_time = MEA_SETTINGS['laserOnTime']
-        update_vars('MEA_SETTINGS', 'laserOnTime', int(values[event])*1e-3)
+        update_vars('MEA_SETTINGS', 'laserOnTime', MEA_SETTINGS['laserOnTime'])
 
     elif event == 'MEAS_START':
+        app['SW_TIME'].update(disabled=True)
+        app['MEAS_NAME'].update(disabled=True)
+        app['MEAS_NUM'].update(disabled=True)
+        app['MEAS_DATE'].update(disabled=True)
+
         MEA_SETTINGS['measurementStarted'] = True
         MEA_SETTINGS['justStarted'] = True
-        funcs.save_measurement_settings(_VARS)
+
+        MEA_SETTINGS['amplitudeMeasurementFile'], MEA_SETTINGS['phaseMeasurementFile'] = funcs.create_base_files(_VARS)
 
     elif event == 'MEAS_STOP':
+        app['SW_TIME'].update(disabled=False)
+        app['MEAS_NAME'].update(disabled=False)
+        app['MEAS_NUM'].update(disabled=False)
+        app['MEAS_DATE'].update(disabled=False)
+
         MEA_SETTINGS['measurementStarted'] = False
         MEA_SETTINGS['justStarted'] = False
+
         app.reset_fills()
         app.active_laser_generator.send('restart')
         app.active_demod_generator.send('restart')
@@ -144,12 +159,21 @@ def event_values(app, event, values):
 
         active_laser = MEA_SETTINGS['activeLaser']
         active_demod = MEA_SETTINGS['activeDemod']
-        funcs.turn_on_laser(active_laser)
 
+        demodulator = getattr(app, f'Demodulator{active_demod+1}')
         app.update_fills(active_laser, active_demod)
 
-        a = getattr(app, f'Demodulator{active_demod+1}').measure_amplitude()
-        p = getattr(app, f'Demodulator{active_demod+1}').measure_phase()
+        if active_laser == 0 and active_demod == 0:
+            _VARS['amplitudes'] = []
+            _VARS['phases'] = []
+
+        funcs.turn_on_laser(active_laser)
+
+        _VARS['amplitudes'].append(demodulator.measure_amplitude())
+        _VARS['phases'].append(demodulator.measure_phase())
+
+        if funcs.is_end_of_measurement_set(_VARS):
+            funcs.save_measurement_set(_VARS)
 
         MEA_SETTINGS['activeDemod'] = next(app.active_demod_generator)
         if MEA_SETTINGS['activeDemod'] == 0:

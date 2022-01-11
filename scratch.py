@@ -1,24 +1,23 @@
-import json
+import csv
 
 
-with open('settings.json', 'r') as f:
-    settings = json.load(f)
-    APP_SETTINGS = settings['APP_SETTINGS']
-    DDS_SETTINGS = settings['DDS_SETTINGS']
-    ADC_SETTINGS = settings['ADC_SETTINGS']
-    MEA_SETTINGS = settings['MEA_SETTINGS']
-    LAS_SETTINGS = settings['LAS_SETTINGS']
-    PIN_SETTINGS = settings['PIN_SETTINGS']
+data = [[-0.1, 0.2, 1.0, -0.4, -0.43, 0.3, 0.2, -0.11],
+        [0.1, -0.2, -1.0, 0.4, 0.43, -0.3, -0.2, 0.11]]
 
 
-fileName = 'measurement conditions.json'
+header = []
+for laser in range(4):
+    for apd in range(2):
+        seq = ('L' + str(laser+1), 'APD' + str(apd+1))
+        header.append('-'.join(seq))
+print(header)
 
+with open('csv_test.csv', 'w+') as f:
+    writer = csv.writer(f, delimiter=',')
+    writer.writerows([header])
 
-measurement_conditions = {}
-measurement_conditions.update(DDS_SETTINGS)
-measurement_conditions.update(ADC_SETTINGS)
-
-print(measurement_conditions)
-
-with open('measurement conditions.json', 'w') as f:
-    json.dump(measurement_conditions, f)
+with open('csv_test.csv', 'a+') as f:
+    writer = csv.writer(f, delimiter=',')
+    for d in data:
+        print(d)
+        writer.writerows([d])

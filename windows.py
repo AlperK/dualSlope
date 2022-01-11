@@ -5,7 +5,7 @@ import datetime
 
 with open('defaults.json', 'r') as f:
     settings = json.load(f)
-    print(type(settings))
+
     APP_SETTINGS = settings['APP_SETTINGS']
     DDS_SETTINGS = settings['DDS_SETTINGS']
     ADC_SETTINGS = settings['ADC_SETTINGS']
@@ -201,18 +201,26 @@ class MEASTab(Sg.Tab):
                        Sg.Button('Start', size=(10, 1), key='MEAS_START'),
                        Sg.Button('Stop', size=(10, 1), key='MEAS_STOP')]
         _MEAS_ROW_2 = [Sg.Text('Measurement Name:', size=(30, 1)),
-                       Sg.InputText(key='MEAS_NAME', enable_events=True),
+                       Sg.InputText(key='MEAS_NAME', enable_events=True,
+                                    disabled_readonly_background_color=Sg.theme_element_background_color(),
+                                    disabled_readonly_text_color=Sg.theme_element_text_color()),
                        Sg.Text('Measurement Number:', size=(20, 1)),
-                       Sg.InputText(key='MEAS_NUM', size=(5, 1), enable_events=True)]
+                       Sg.InputText(key='MEAS_NUM', size=(5, 1), enable_events=True,
+                                    disabled_readonly_background_color=Sg.theme_element_background_color(),
+                                    disabled_readonly_text_color=Sg.theme_element_text_color())]
         _MEAS_ROW_3 = [Sg.Text('Measurement Date (YYYY-MM-DD):', size=(30, 1)),
-                       Sg.InputText(default_text=datetime.date.today(), key='MEAS_DATE', enable_events=True),
+                       Sg.InputText(default_text=datetime.date.today(), key='MEAS_DATE', enable_events=True,
+                                    disabled_readonly_background_color=Sg.theme_element_background_color(),
+                                    disabled_readonly_text_color=Sg.theme_element_text_color()),
                        Sg.CalendarButton('Calendar', target='MEAS_DATE', format='%Y-%m-%d', key='ASD',
                                          default_date_m_d_y=(1, None, 2022)),
-                       Sg.Button('File Name', key='MEAS_FILE')
+                       # Sg.Button('File Name', key='MEAS_FILE'),
                        ]
         _MEAS_ROW_4 = [Sg.Text('_'*150)]
         _MEAS_ROW_5 = [Sg.Text('Switching Period (ms):', size=(30, 1)),
-                       Sg.InputText(key='SW_TIME', default_text=MEA_SETTINGS['laserOnTime'], enable_events=True)]
+                       Sg.InputText(key='SW_TIME', default_text=MEA_SETTINGS['laserOnTime'], enable_events=True,
+                                    disabled_readonly_background_color=Sg.theme_element_background_color(),
+                                    disabled_readonly_text_color=Sg.theme_element_text_color())]
 
         _MEAS_COL_2 = Sg.Column(
             [_MEAS_ROW_1, _MEAS_ROW_2, _MEAS_ROW_3, _MEAS_ROW_4, _MEAS_ROW_5]

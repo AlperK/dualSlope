@@ -3,6 +3,7 @@ import json
 import datetime
 import time
 from pathlib import Path as Path
+import csv
 import AD9959_v2
 import ADS8685
 
@@ -179,16 +180,58 @@ def demodulator_count_generator():
             num += 1
 
 
-def save_measurement_settings(var_dict):
-    saved_settings = {}
+def create_base_files(var_dict):
+    loc = Path(var_dict['MEA_SETTINGS']['measurementFileName'])
 
-    saved_settings.update(var_dict['DDS_SETTINGS'])
-    saved_settings.update(var_dict['ADC_SETTINGS'])
-    saved_settings.update(var_dict['MEA_SETTINGS'])
+    measurement_conditions = {}
+    measurement_conditions.update(var_dict['DDS_SETTINGS'])
+    measurement_conditions.update(var_dict['ADC_SETTINGS'])
+    measurement_conditions.update(var_dict['MEA_SETTINGS'])
 
-    json_file = Path.joinpath(Path(var_dict['MEA_SETTINGS']['measurementFileName']), Path('measurement conditions.json'))
+    save_measurement_settings(loc, measurement_conditions)
+    amplitude_file, phase_file = initialize_csv_files(loc)
+    return str(amplitude_file), str(phase_file)
 
-    Path(var_dict['MEA_SETTINGS']['measurementFileName']).mkdir(parents=True, exist_ok=True)
 
-    with json_file.open(mode='w') as file:
-        json.dump(saved_settings, file)
+def save_measurement_settings(loc, measurement_conditions):
+
+    Path(loc).mkdir(parents=True, exist_ok=True)
+    json_file = Path.joinpath(loc, Path('measurement conditions.json'))
+
+    with json_file.open(mode='w+') as file:
+        json.dump(measurement_conditions, file)
+
+
+def initialize_csv_files(loc):
+    header = []
+    for laser in range(4):
+        for apd in range(2):
+            seq = ('L' + str(laser + 1), 'APD' + str(apd + 1))
+            header.append('-'.join(seq))
+
+    phase_file = Path.joinpath(loc, Path('phase.csv'))
+    with open(phase_file, 'w+') as csv_file:
+        writer = csv.writer(csv_file, delimiter=',')
+        writer.writerows([header])
+
+    amplitude_file = Path.joinpath(loc, Path('amplitude.csv'))
+    with open(amplitude_file, 'w+') as csv_file:
+        writer = csv.writer(csv_file, delimiter=',')
+        writer.writerows([header])
+
+    return amplitude_file, phase_file
+
+
+def is_end_of_measurement_set(var_dict):
+    return len(var_dict['amplitudes']) == 8 and len(var_dict['phases']) == 8
+
+
+def save_measurement_set(var_dict):
+    with open(Path(var_dict['MEA_SETTINGS']['amplitudeMeasurementFile']), 'a+') as csv_file:
+        writer = csv.writer(csv_file, delimiter=',')
+        writer.writerows([var_dict['amplitudes']])
+
+    with open(Path(var_dict['MEA_SETTINGS']['phaseMeasurementFile']), 'a+') as csv_file:
+        writer = csv.writer(csv_file, delimiter=',')
+        writer.writerows([var_dict['phases']])
+
