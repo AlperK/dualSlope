@@ -162,15 +162,15 @@ class ADCFrame(Sg.Frame):
         _ADC_COL_1 = Sg.Column([
             [Sg.Text('ADC 1', size=(10, 1))],
             [Sg.Combo([u'\u00B1 12.288 V', u'\u00B1 10.24 V', u'\u00B1 6.144 V', u'\u00B1 5.12 V', u'\u00B1 2.56 V',
-                       '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V', '0-2.56 V'],
-                      default_value=ADC_SETTINGS['range'][0], enable_events=True, key='ADC_1_RANGE')],
+                       '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V'],
+                      default_value=ADC_SETTINGS['range'][4], enable_events=True, key='ADC_1_RANGE')],
             [Sg.Button('Reset', size=(10, 1), key='ADC_1_RESET')],
         ])
         _ADC_COL_2 = Sg.Column([
             [Sg.Text('ADC 2', size=(20, 1))],
             [Sg.Combo([u'\u00B1 12.288 V', u'\u00B1 10.24 V', u'\u00B1 6.144 V', u'\u00B1 5.12 V', u'\u00B1 2.56 V',
-                       '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V', '0-2.56 V'],
-                      default_value=ADC_SETTINGS['range'][0], enable_events=True, key='ADC_1_RANGE')],
+                       '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V'],
+                      default_value=ADC_SETTINGS['range'][4], enable_events=True, key='ADC_2_RANGE')],
             [Sg.Button('Reset', size=(10, 1), key='ADC_2_RESET')],
         ])
 

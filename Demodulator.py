@@ -18,6 +18,6 @@ class Demodulator:
 
     def measure_phase(self):
         funcs.set_adc2pha(self.amp_pha)
-        time.sleep(self.laser_on_time)
+        time.sleep(self.laser_on_time/2)
         return self.ADC.convert()
 

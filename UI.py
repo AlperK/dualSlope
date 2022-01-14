@@ -5,7 +5,6 @@ import windows
 import funcs
 import json
 from pathlib import Path as Path
-import csv
 
 
 with open('settings.json', 'r') as f:
@@ -110,6 +109,17 @@ def event_values(app, event, values):
         funcs.load_defaults(app.dds, _VARS, window=app)
         funcs.update_event_log('Default DDS settings are loaded.', _VARS, app)
 
+    elif event in ['ADC_1_RANGE', 'ADC_2_RANGE']:
+        new_range = ADC_SETTINGS['range'].index(values[event])
+        if new_range >= 5:
+            new_range += 3
+
+        channel = int(event[4])
+        demodulator = getattr(app, f'Demodulator{channel}')
+
+        adc = getattr(demodulator, f'ADC')
+        adc.set_range(new_range)
+
     elif event in ['ADC_1_RESET', 'ADC_2_RESET']:
         channel = int(event[4])
         demod = getattr(app, f'Demodulator{channel}')
@@ -208,10 +218,12 @@ class MainApplication(windows.MainWindow):
         self.Demodulator1 = Demodulator.Demodulator(self.ADC1, PIN_SETTINGS['amp_pha_1'],
                                                     MEA_SETTINGS['laserOnTime']*1e-3)
 
+
         self.ADC2 = ADS8685.ADS8685(bus=0, device=1, reset_pin=PIN_SETTINGS['adc_rst_2'])
         self.ADC2.set_range(0b100)
         self.Demodulator2 = Demodulator.Demodulator(self.ADC2, PIN_SETTINGS['amp_pha_2'],
                                                     MEA_SETTINGS['laserOnTime']*1e-3)
+
 
         self.R0 = self["-GRAPH-"].draw_rectangle((60, 40), (80, 60),
                                                  fill_color='deepskyblue', line_color='darkslateblue')

@@ -21,7 +21,8 @@ dds_settings = {
 }
 
 adc_settings = {
-    'range': [u'\u00B1 2.56 V', u'\u00B1 2.56 V']
+    'range': [u'\u00B1 12.288 V', u'\u00B1 10.24 V', u'\u00B1 6.144 V', u'\u00B1 5.12 V', u'\u00B1 2.56 V',
+              '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V'],
 }
 
 mea_settings = {
