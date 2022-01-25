@@ -16,9 +16,9 @@ with open('settings.json', 'r') as f:
 
 
 DDS_PINS = {
-    'P_DWN': 22,
-    'IO_UP': 29,
-    'RESET': 13
+    'P_DWN': 33,
+    'IO_UP': 36,
+    'RESET': 37
 }
 
 

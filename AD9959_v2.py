@@ -98,7 +98,7 @@ class AD9959:
         # Setup the SPI
         self.spi = spidev.SpiDev()
         self.spi.open(bus, device)
-        self.spi.max_speed_hz = 10000000
+        self.spi.max_speed_hz = 1000000
 
         # Setup the GPIO
         self.IO_UPDATE_PIN = IO_UPDATE_PIN
