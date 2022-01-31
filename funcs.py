@@ -3,7 +3,9 @@ import json
 import datetime
 import time
 from pathlib import Path as Path
+import shutil
 import csv
+import pyvisa
 import AD9959_v2
 import ADS8685
 
@@ -237,6 +239,7 @@ def save_measurement_set(var_dict):
 
 
 def start_phase_calibration(demodulator, val_dict):
+    print(demodulator.laser_on_time)
     start_freq = int(val_dict['PHA_CALIB_START_PHA'])
     stop_freq = int(val_dict['PHA_CALIB_STOP_PHA'])
     step_freq = int(val_dict['PHA_CALIB_STEP_PHA'])
@@ -245,10 +248,59 @@ def start_phase_calibration(demodulator, val_dict):
     stop_amp = int(val_dict['PHA_CALIB_STOP_AMP'])
     step_amp = int(val_dict['PHA_CALIB_STEP_AMP'])
 
+    rm = pyvisa.ResourceManager('@py')
+
+    sigGen = rm.open_resource('USB0::6833::1601::DG4C141400166::0::INSTR')
+    print(sigGen.query('*IDN?'))
+
+    sigGen.write('SOUR1:APPL:SIN 1e3, 1, 0, 0')
+    sigGen.write('SOUR2:APPL:SIN 1e3, 1, 0, 0')
+
+    sigGen.write('OUTP1 ON')
+    sigGen.write('OUTP2 ON')
+    sigGen.write('SOUR1:PHAS:INIT')
+
+    loc = Path.joinpath(Path(val_dict['MEAS_DATE'], Path('PhaseCalibration')))
+    if loc.is_dir():
+        rmtree(loc)
+
+        loc.mkdir(parents=True, exist_ok=True)
+        loc.chmod(511)
+
+        loc.parent.chmod(511)
+    else:
+        loc.mkdir(parents=True, exist_ok=True)
+        loc.chmod(511)
+        loc.parent.chmod(511)
+
     for freq in range(start_freq, stop_freq + step_freq, step_freq):
-        for amplitude in range(start_amp, stop_amp + step_amp, step_amp):
-            for phase in range(0, 181):
-                pass
+        for amplitude1 in range(start_amp, stop_amp + step_amp, step_amp):
+            root = 'SOUR1:APPL:SIN '
+            t = ', '.join([str(freq*1e3), str(amplitude1*1e-3), '0', '0'])
+            cmd = ''.join([root, t])
+            sigGen.write(cmd)
+            for amplitude2 in range(start_amp, stop_amp + step_amp, step_amp):
+                # print(Path(''.join([str(amplitude2), 'mV'])))
+                file = Path.joinpath(loc,
+                                     Path(''.join([str(freq), 'kHz_',
+                                                   str(amplitude1), 'mV_',
+                                                   str(amplitude2), 'mV_',
+                                                   'phase.csv'])))
+                file.touch(mode=511)
+                # loc.chmod(511)
+                for phase in range(0, 181):
+                    root = 'SOUR2:APPL:SIN '
+                    t = ', '.join([str(freq*1e3), str(amplitude2*1e-3), '0', str(phase)])
+                    cmd = ''.join([root, t])
+
+                    sigGen.write(cmd)
+                    sigGen.write('SOUR1:PHAS:INIT')
+
+                    # print(phase, demodulator.measure_phase())
+                    # time.sleep(0.1)
+                    with open(file, 'a+') as csv_file:
+                        writer = csv.writer(csv_file, delimiter=',')
+                        writer.writerow([phase, demodulator.measure_phase()])
 
 
 def start_amplitude_calibration(demodulator, val_dict):
@@ -263,3 +315,14 @@ def start_amplitude_calibration(demodulator, val_dict):
     for freq in range(start_freq, stop_freq + step_freq, step_freq):
         for amplitude in range(start_amp, stop_amp + step_amp, step_amp):
             print(freq, amplitude)
+
+
+def rmtree(root):
+
+    for p in root.iterdir():
+        if p.is_dir():
+            rmtree(p)
+        else:
+            p.unlink()
+
+    root.rmdir()
