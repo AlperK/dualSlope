@@ -18,6 +18,7 @@ with open('settings.json', 'r') as f:
 
 
 _VARS = {
+
 }
 _VARS.update(settings)
 
@@ -165,6 +166,24 @@ def event_values(app, event, values):
         app.reset_fills()
         app.active_laser_generator.send('restart')
         app.active_demod_generator.send('restart')
+
+    elif event == 'PHA_CALIB_START':
+        if values['Demodulator 1']:
+            Demodulator = app.Demodulator1
+        elif values['Demodulator 2']:
+            Demodulator = app.Demodulator2
+        else:
+            return
+        funcs.start_phase_calibration(Demodulator, values)
+
+    elif event == 'AMP_CALIB_START':
+        if values['Demodulator 1']:
+            Demodulator = app.Demodulator1
+        elif values['Demodulator 2']:
+            Demodulator = app.Demodulator2
+        else:
+            return
+        funcs.start_amplitude_calibration(Demodulator, values)
 
     if MEA_SETTINGS['measurementStarted']:
         if MEA_SETTINGS['justStarted']:

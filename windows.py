@@ -248,8 +248,10 @@ class Log(Sg.Frame):
 class DemodulatorTab(Sg.Tab):
     def __init__(self):
         _DEMOD_ROW = [
-                Sg.Radio('Demodulator 1', 'Demodulator', enable_events=True, default=False, size=(15, 1)),
-                Sg.Radio('Demodulator 2', 'Demodulator', enable_events=True, default=False, size=(15, 1)),
+                Sg.Radio('Demodulator 1', 'Demodulator',
+                         enable_events=True, size=(15, 1), default=False, key='Demodulator 1'),
+                Sg.Radio('Demodulator 2', 'Demodulator',
+                         enable_events=True, size=(15, 1), default=False, key='Demodulator 2'),
              ]
         _DEMOD_FRAME = Sg.Frame(title='', layout=[
             _DEMOD_ROW
@@ -264,12 +266,12 @@ class DemodulatorTab(Sg.Tab):
             Sg.Input(size=(5, 1), default_text='3', key='PHA_CALIB_STEP_PHA'),
         ]
         _PHA_ROW_1 = [
-            Sg.Text('Start Amplitude (V): ', size=(20, 1)),
-            Sg.Input(size=(5, 1), default_text='0.5', key='PHA_CALIB_START_AMP'),
-            Sg.Text('Stop Amplitude (V): ', size=(20, 1)),
-            Sg.Input(size=(5, 1), default_text='2', key='PHA_CALIB_STOP_AMP'),
-            Sg.Text('Step (V):', size=(20, 1)),
-            Sg.Input(size=(5, 1), default_text='0.5', key='PHA_CALIB_STEP_AMP'),
+            Sg.Text('Start Amplitude (mV): ', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='500', key='PHA_CALIB_START_AMP'),
+            Sg.Text('Stop Amplitude (mV): ', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='2000', key='PHA_CALIB_STOP_AMP'),
+            Sg.Text('Step (mV):', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='500', key='PHA_CALIB_STEP_AMP'),
         ]
         _PHA_ROW_2 = [
             Sg.Button('Start', key='PHA_CALIB_START'),

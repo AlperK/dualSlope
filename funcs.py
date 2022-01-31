@@ -235,3 +235,31 @@ def save_measurement_set(var_dict):
         writer = csv.writer(csv_file, delimiter=',')
         writer.writerows([var_dict['phases']])
 
+
+def start_phase_calibration(demodulator, val_dict):
+    start_freq = int(val_dict['PHA_CALIB_START_PHA'])
+    stop_freq = int(val_dict['PHA_CALIB_STOP_PHA'])
+    step_freq = int(val_dict['PHA_CALIB_STEP_PHA'])
+
+    start_amp = int(val_dict['PHA_CALIB_START_AMP'])
+    stop_amp = int(val_dict['PHA_CALIB_STOP_AMP'])
+    step_amp = int(val_dict['PHA_CALIB_STEP_AMP'])
+
+    for freq in range(start_freq, stop_freq + step_freq, step_freq):
+        for amplitude in range(start_amp, stop_amp + step_amp, step_amp):
+            for phase in range(0, 181):
+                pass
+
+
+def start_amplitude_calibration(demodulator, val_dict):
+    start_freq = int(val_dict['AMP_CALIB_START_PHA'])
+    stop_freq = int(val_dict['AMP_CALIB_STOP_PHA'])
+    step_freq = int(val_dict['AMP_CALIB_STEP_PHA'])
+
+    start_amp = int(val_dict['AMP_CALIB_START_AMP'])
+    stop_amp = int(val_dict['AMP_CALIB_STOP_AMP'])
+    step_amp = int(val_dict['AMP_CALIB_STEP_AMP'])
+
+    for freq in range(start_freq, stop_freq + step_freq, step_freq):
+        for amplitude in range(start_amp, stop_amp + step_amp, step_amp):
+            print(freq, amplitude)
