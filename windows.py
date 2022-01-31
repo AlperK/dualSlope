@@ -25,10 +25,12 @@ class MainWindow(Sg.Window):
 
         self.mea_tab = MEASTab()
         self.hardware_tab = HardwareTab()
+        self.demod_tab = DemodulatorTab()
         self.layout = [
             [Sg.TabGroup([
                 [self.hardware_tab],
                 [self.mea_tab],
+                [self.demod_tab],
             ]),
             ],
             [Log()]
@@ -165,6 +167,7 @@ class ADCFrame(Sg.Frame):
                        '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V'],
                       default_value=ADC_SETTINGS['range'][4], enable_events=True, key='ADC_1_RANGE')],
             [Sg.Button('Reset', size=(10, 1), key='ADC_1_RESET')],
+            [Sg.Button('Measure', size=(10, 1), key='ADC_1_MEAS')],
         ])
         _ADC_COL_2 = Sg.Column([
             [Sg.Text('ADC 2', size=(20, 1))],
@@ -172,6 +175,7 @@ class ADCFrame(Sg.Frame):
                        '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V'],
                       default_value=ADC_SETTINGS['range'][4], enable_events=True, key='ADC_2_RANGE')],
             [Sg.Button('Reset', size=(10, 1), key='ADC_2_RESET')],
+            [Sg.Button('Measure', size=(10, 1), key='ADC_2_MEAS')],
         ])
 
         self.win_layout = [[_ADC_COL_0, _ADC_COL_1, Sg.VerticalSeparator(), _ADC_COL_2]]
@@ -239,3 +243,76 @@ class Log(Sg.Frame):
             Sg.Multiline(disabled=True, key='EVE_LOG', size=(400, 25), enable_events=True)
         ]]
         Sg.Frame.__init__(self, title='Event Log', layout=self.win_layout)
+
+
+class DemodulatorTab(Sg.Tab):
+    def __init__(self):
+        _DEMOD_ROW = [
+                Sg.Radio('Demodulator 1', 'Demodulator', enable_events=True, default=False, size=(15, 1)),
+                Sg.Radio('Demodulator 2', 'Demodulator', enable_events=True, default=False, size=(15, 1)),
+             ]
+        _DEMOD_FRAME = Sg.Frame(title='', layout=[
+            _DEMOD_ROW
+        ])
+
+        _PHA_ROW_0 = [
+            Sg.Text('Start Frequency (kHz): ', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='1', key='PHA_CALIB_START_PHA'),
+            Sg.Text('Stop Frequency (kHz): ', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='10', key='PHA_CALIB_STOP_PHA'),
+            Sg.Text('Step (kHz):', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='3', key='PHA_CALIB_STEP_PHA'),
+        ]
+        _PHA_ROW_1 = [
+            Sg.Text('Start Amplitude (V): ', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='0.5', key='PHA_CALIB_START_AMP'),
+            Sg.Text('Stop Amplitude (V): ', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='2', key='PHA_CALIB_STOP_AMP'),
+            Sg.Text('Step (V):', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='0.5', key='PHA_CALIB_STEP_AMP'),
+        ]
+        _PHA_ROW_2 = [
+            Sg.Button('Start', key='PHA_CALIB_START'),
+            Sg.Button('Stop', key='PHA_CALIB_STOP'),
+        ]
+
+        _PHA_FRAME = Sg.Frame(title='Phase Calibration', layout=[
+            _PHA_ROW_0,
+            _PHA_ROW_1,
+            _PHA_ROW_2,
+        ])
+
+        _AMP_ROW_0 = [
+            Sg.Text('Start Amplitude (mV): ', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='20', key='AMP_CALIB_START_AMP'),
+            Sg.Text('Stop Amplitude (mV): ', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='2000', key='AMP_CALIB_STOP_AMP'),
+            Sg.Text('Step (mV):', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='10', key='AMP_CALIB_STEP_AMP'),
+        ]
+        _AMP_ROW_1 = [
+            Sg.Text('Start Frequency (kHz): ', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='1', key='AMP_CALIB_START_PHA'),
+            Sg.Text('Stop Frequency (kHz): ', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='10', key='AMP_CALIB_STOP_PHA'),
+            Sg.Text('Step (kHz):', size=(20, 1)),
+            Sg.Input(size=(5, 1), default_text='3', key='AMP_CALIB_STEP_PHA')
+        ]
+        _AMP_ROW_2 = [
+            Sg.Button('Start', key='AMP_CALIB_START'),
+            Sg.Button('Stop', key='AMP_CALIB_STOP'),
+        ]
+
+        _AMP_FRAME = Sg.Frame(title='Amplitude Calibration', layout=[
+            _AMP_ROW_0,
+            _AMP_ROW_1,
+            _AMP_ROW_2,
+        ])
+
+        self.layout = [
+            [_DEMOD_FRAME],
+            [_PHA_FRAME],
+            [_AMP_FRAME],
+        ]
+
+        Sg.Tab.__init__(self, title='Demodulator Calibration', layout=self.layout)

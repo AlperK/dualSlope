@@ -126,6 +126,13 @@ def event_values(app, event, values):
         adc = getattr(demod, f'ADC')
         adc.reset()
 
+    elif event in ['ADC_1_MEAS', 'ADC_2_MEAS']:
+        channel = int(event[4])
+        demod = getattr(app, f'Demodulator{channel}')
+        adc = getattr(demod, f'ADC')
+
+        funcs.update_event_log(str(adc.convert()), _VARS, app)
+
     elif event == 'SW_TIME':
         if not values[event] == '':
             MEA_SETTINGS['laserOnTime'] = int(values[event])*1e-3
@@ -218,12 +225,10 @@ class MainApplication(windows.MainWindow):
         self.Demodulator1 = Demodulator.Demodulator(self.ADC1, PIN_SETTINGS['amp_pha_1'],
                                                     MEA_SETTINGS['laserOnTime']*1e-3)
 
-
         self.ADC2 = ADS8685.ADS8685(bus=0, device=1, reset_pin=PIN_SETTINGS['adc_rst_2'])
         self.ADC2.set_range(0b100)
         self.Demodulator2 = Demodulator.Demodulator(self.ADC2, PIN_SETTINGS['amp_pha_2'],
                                                     MEA_SETTINGS['laserOnTime']*1e-3)
-
 
         self.R0 = self["-GRAPH-"].draw_rectangle((60, 40), (80, 60),
                                                  fill_color='deepskyblue', line_color='darkslateblue')
