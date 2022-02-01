@@ -239,7 +239,6 @@ def save_measurement_set(var_dict):
 
 
 def start_phase_calibration(demodulator, val_dict):
-    print(demodulator.laser_on_time)
     start_freq = int(val_dict['PHA_CALIB_START_PHA'])
     stop_freq = int(val_dict['PHA_CALIB_STOP_PHA'])
     step_freq = int(val_dict['PHA_CALIB_STEP_PHA'])
@@ -249,9 +248,11 @@ def start_phase_calibration(demodulator, val_dict):
     step_amp = int(val_dict['PHA_CALIB_STEP_AMP'])
 
     rm = pyvisa.ResourceManager('@py')
-
-    sigGen = rm.open_resource('USB0::6833::1601::DG4C141400166::0::INSTR')
-    print(sigGen.query('*IDN?'))
+    try:
+        sigGen = rm.open_resource('USB0::6833::1601::DG4C141400166::0::INSTR')
+    except:
+        update_event_log('Could not find RIGOL DG4162', val_dict)
+        return
 
     sigGen.write('SOUR1:APPL:SIN 1e3, 1, 0, 0')
     sigGen.write('SOUR2:APPL:SIN 1e3, 1, 0, 0')
@@ -312,9 +313,47 @@ def start_amplitude_calibration(demodulator, val_dict):
     stop_amp = int(val_dict['AMP_CALIB_STOP_AMP'])
     step_amp = int(val_dict['AMP_CALIB_STEP_AMP'])
 
+    rm = pyvisa.ResourceManager('@py')
+    try:
+        sigGen = rm.open_resource('USB0::6833::1601::DG4C141400166::0::INSTR')
+    except:
+        update_event_log('Could not find RIGOL DG4162', val_dict)
+        return
+
+    sigGen.write('SOUR1:APPL:SIN 1e3, 1, 0, 0')
+    sigGen.write('SOUR2:APPL:SIN 1e3, 1, 0, 0')
+
+    sigGen.write('OUTP1 ON')
+    sigGen.write('OUTP2 ON')
+    sigGen.write('SOUR1:PHAS:INIT')
+
+    loc = Path.joinpath(Path(val_dict['MEAS_DATE'], Path('AmplitudeCalibration')))
+    if loc.is_dir():
+        rmtree(loc)
+
+        loc.mkdir(parents=True, exist_ok=True)
+        loc.chmod(511)
+
+        loc.parent.chmod(511)
+    else:
+        loc.mkdir(parents=True, exist_ok=True)
+        loc.chmod(511)
+        loc.parent.chmod(511)
+
     for freq in range(start_freq, stop_freq + step_freq, step_freq):
-        for amplitude in range(start_amp, stop_amp + step_amp, step_amp):
-            print(freq, amplitude)
+        file = Path.joinpath(loc,
+                             Path(''.join([str(freq), 'kHz_',
+                                           'amplitude.csv'])))
+        file.touch(mode=511)
+        for amplitude1 in range(start_amp, stop_amp + step_amp, step_amp):
+            root = 'SOUR1:APPL:SIN '
+            t = ', '.join([str(freq*1e3), str(amplitude1*1e-3), '0', '0'])
+            cmd = ''.join([root, t])
+            sigGen.write(cmd)
+
+            with open(file, 'a+') as csv_file:
+                writer = csv.writer(csv_file, delimiter=',')
+                writer.writerow([amplitude1, demodulator.measure_amplitude()])
 
 
 def rmtree(root):
