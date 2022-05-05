@@ -14,9 +14,9 @@ dds_settings = {
     'refClk': 25e6,
     'PLL_MUL': 20,
     'channelFrequencies': [95.001e6, 95.001e6, 95e6, 95e6],
-    'channelAmplitudes': [1.0, 1.0, 1.0, 1.0],
-    'channelPhases': [0, 0, 0, 0],
-    'channelDividers': [1, 1, 1, 1],
+    'channelAmplitudes': [1.0, 0.15, 0.5, 0.5],
+    'channelPhases': [0, 0, 0, 180],
+    'channelDividers': [1, 2, 1, 1],
 
 }
 

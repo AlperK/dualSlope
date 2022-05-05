@@ -111,7 +111,8 @@ class DDSFrame(Sg.Frame):
             # [Sg.Button('Phases', enable_events=True, key='-phases-')]
         ])
         _DDS_CHN_COL_3 = Sg.Column([
-            [Sg.Text('', size=(10, 1))],
+            # [Sg.Text('', size=(10, 1))],
+            [Sg.Stretch(), Sg.Button('Reset DDS', size=(10, 1), enable_events=True, key='DDS_RST')],
             [Sg.Text('Channel 3', size=(10, 1)),
              Sg.InputText(default_text=DDS_SETTINGS['channelAmplitudes'][3],
                           size=(5, 1), justification='left', enable_events=True, key='CH_3_AMP')],
@@ -168,6 +169,18 @@ class ADCFrame(Sg.Frame):
                       default_value=ADC_SETTINGS['range'][4], enable_events=True, key='ADC_1_RANGE')],
             [Sg.Button('Reset', size=(10, 1), key='ADC_1_RESET')],
             [Sg.Button('Measure', size=(10, 1), key='ADC_1_MEAS')],
+            [
+                Sg.Button('Laser 1 ON', size=(10, 1), key='LED_1_ON'),
+                Sg.Button('Laser 1 OFF', size=(10, 1), key='LED_1_OFF')
+            ],
+            [
+                Sg.Button('Laser 2 ON', size=(10, 1), key='LED_2_ON'),
+                Sg.Button('Laser 2 OFF', size=(10, 1), key='LED_2_OFF')
+            ],
+            [
+                Sg.Button('Phase', size=(10, 1), key='PHASE_1'),
+                Sg.Button('Amplitude', size=(10, 1), key='AMPLITUDE_1')
+            ],
         ])
         _ADC_COL_2 = Sg.Column([
             [Sg.Text('ADC 2', size=(20, 1))],
@@ -176,6 +189,18 @@ class ADCFrame(Sg.Frame):
                       default_value=ADC_SETTINGS['range'][4], enable_events=True, key='ADC_2_RANGE')],
             [Sg.Button('Reset', size=(10, 1), key='ADC_2_RESET')],
             [Sg.Button('Measure', size=(10, 1), key='ADC_2_MEAS')],
+            [
+                Sg.Button('Laser 3 ON', size=(10, 1), key='LED_3_ON'),
+                Sg.Button('Laser 3 OFF', size=(10, 1), key='LED_3_OFF')
+            ],
+            [
+                Sg.Button('Laser 4 ON', size=(10, 1), key='LED_4_ON'),
+                Sg.Button('Laser 4 OFF', size=(10, 1), key='LED_4_OFF')
+            ],
+            [
+                Sg.Button('Phase', size=(10, 1), key='PHASE_2'),
+                Sg.Button('Amplitude', size=(10, 1), key='AMPLITUDE_2')
+            ],
         ])
 
         self.win_layout = [[_ADC_COL_0, _ADC_COL_1, Sg.VerticalSeparator(), _ADC_COL_2]]

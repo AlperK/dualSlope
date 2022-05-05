@@ -116,6 +116,29 @@ def load_defaults(device, var_dict, window):
         print('Is not instance.')
 
 
+def load_dds_settings(device, var_dict, window):
+    # for key, value in dds_settings_def.items():
+    #     var_dict['DDS_SETTINGS'][key] = value
+
+    device.set_refclock(var_dict['DDS_SETTINGS']['refClk'])
+    device.set_freqmult(var_dict['DDS_SETTINGS']['PLL_MUL'], ioupdate=True)
+    set_rf_if(r_f=var_dict['DDS_SETTINGS']['RF'], i_f=var_dict['DDS_SETTINGS']['IF'], dds=device)
+
+    for ch in range(4):
+        device.set_output(ch, value=var_dict['DDS_SETTINGS']['channelAmplitudes'][ch], var='amplitude')
+        device.set_output(ch, value=var_dict['DDS_SETTINGS']['channelPhases'][ch], var='phase')
+        device.set_current(ch, var_dict['DDS_SETTINGS']['channelDividers'][ch], ioupdate=True)
+
+    for ch in range(4):
+        window['CH_{}_AMP'.format(ch)].Update(value=var_dict['DDS_SETTINGS']['channelAmplitudes'][ch])
+        window['CH_{}_PHA'.format(ch)].Update(value=var_dict['DDS_SETTINGS']['channelPhases'][ch])
+        window['CH_{}_DIV'.format(ch)].Update(value=var_dict['DDS_SETTINGS']['channelDividers'][ch])
+
+    window['RF'].update(value=var_dict['DDS_SETTINGS']['RF'])
+    window['IF'].update(value=var_dict['DDS_SETTINGS']['IF'])
+    window['PLL_MUL'].update(value=var_dict['DDS_SETTINGS']['PLL_MUL'])
+
+
 def update_event_log(message, var_dict, window):
     t = datetime.datetime.now().strftime('%H:%M:%S')
     if 'eventLog' not in var_dict:
@@ -153,6 +176,9 @@ def initialize_lasers():
 
 
 def turn_on_laser(laser):
+    for las in LAS_SETTINGS['laserPins']:
+        GPIO.output(las, False)
+
     GPIO.output(LAS_SETTINGS['laserPins'][laser], True)
 
 
@@ -347,6 +373,11 @@ def start_amplitude_calibration(demodulator, val_dict):
         file.touch(mode=511)
         for amplitude1 in range(start_amp, stop_amp + step_amp, step_amp):
             root = 'SOUR1:APPL:SIN '
+            t = ', '.join([str(freq*1e3), str(amplitude1*1e-3), '0', '0'])
+            cmd = ''.join([root, t])
+            sigGen.write(cmd)
+
+            root = 'SOUR2:APPL:SIN '
             t = ', '.join([str(freq*1e3), str(amplitude1*1e-3), '0', '0'])
             cmd = ''.join([root, t])
             sigGen.write(cmd)

@@ -5,6 +5,7 @@ import windows
 import funcs
 import json
 from pathlib import Path as Path
+import RPi.GPIO as GPIO
 
 
 with open('settings.json', 'r') as f:
@@ -33,6 +34,11 @@ def event_values(app, event, values):
             app.dds.shutdown()
         else:
             app.dds.wake_up()
+
+    elif event == 'DDS_RST':
+        app.dds.reset()
+        funcs.load_dds_settings(device=app.dds, var_dict=_VARS, window=app)
+        print(_VARS)
 
     elif event in ['CH_0_AMP_Enter', 'CH_1_AMP_Enter', 'CH_2_AMP_Enter', 'CH_3_AMP_Enter']:
         channel = int(event[3])
@@ -132,7 +138,12 @@ def event_values(app, event, values):
         demod = getattr(app, f'Demodulator{channel}')
         adc = getattr(demod, f'ADC')
 
-        funcs.update_event_log(str(adc.convert()), _VARS, app)
+        temp = []
+        for i in range(256):
+            temp.append(adc.convert())
+        result = sum(temp)/len(temp)
+        funcs.update_event_log(str(result), _VARS, app)
+        # funcs.update_event_log(str(adc.convert()), _VARS, app)
 
     elif event == 'SW_TIME':
         if not values[event] == '':
@@ -184,6 +195,40 @@ def event_values(app, event, values):
         else:
             return
         funcs.start_amplitude_calibration(Demodulator, values)
+
+    elif event == 'LED_1_ON':
+        GPIO.output(10, True)
+
+    elif event == 'LED_1_OFF':
+        GPIO.output(10, False)
+
+    elif event == 'LED_2_ON':
+        GPIO.output(13, True)
+
+    elif event == 'LED_2_OFF':
+        GPIO.output(13, False)
+
+    elif event == 'LED_3_ON':
+        GPIO.output(16, True)
+
+    elif event == 'LED_3_OFF':
+        GPIO.output(16, False)
+
+    elif event == 'LED_4_ON':
+        GPIO.output(15, True)
+
+    elif event == 'LED_4_OFF':
+        GPIO.output(15, False)
+
+    elif event == "PHASE_1":
+        funcs.set_adc2pha(app.Demodulator1.amp_pha)
+    elif event == "AMPLITUDE_1":
+        funcs.set_adc2amp(app.Demodulator1.amp_pha)
+
+    elif event == "PHASE_2":
+        funcs.set_adc2pha(app.Demodulator2.amp_pha)
+    elif event == "AMPLITUDE_2":
+        funcs.set_adc2amp(app.Demodulator2.amp_pha)
 
     if MEA_SETTINGS['measurementStarted']:
         if MEA_SETTINGS['justStarted']:

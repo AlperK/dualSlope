@@ -2,7 +2,6 @@ import UI
 import RPi.GPIO as GPIO
 
 # TODO
-# FIGURE OUT WHY THE NEW RANGES ARE FUCKED!
 # See if dds.shutdown() and dds.wake_up() works.
 # Find a smart way to trim the 'measurement conditions.json'
 
