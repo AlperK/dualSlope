@@ -4,19 +4,19 @@ import pathlib
 app_settings = {
     'theme': 'DarkGrey14',
     'width': 1200,
-    'height': 600,
+    'height': 800,
     'title': 'Dual Slope'
 }
 
 dds_settings = {
-    'RF': 95,
+    'RF': 100,
     'IF': 1,
     'refClk': 25e6,
     'PLL_MUL': 20,
-    'channelFrequencies': [95.001e6, 95.001e6, 95e6, 95e6],
-    'channelAmplitudes': [1.0, 0.15, 0.5, 0.5],
+    'channelFrequencies': [100.001e6, 100.001e6, 100e6, 100e6],
+    'channelAmplitudes': [0.15, 0.1, 0.5, 0.5],
     'channelPhases': [0, 0, 0, 180],
-    'channelDividers': [1, 2, 1, 1],
+    'channelDividers': [4, 4, 1, 1],
 
 }
 
@@ -28,7 +28,7 @@ adc_settings = {
 mea_settings = {
     'canvasSize': (200, 100),
     'measurementFileName': '',
-    'laserOnTime': 1000,
+    'laserOnTime': 500,
     'measurementStarted': False,
     'justStarted': False,
     'activeLaser': None,

@@ -15,7 +15,7 @@ class Demodulator:
         funcs.set_adc2amp(self.amp_pha)
         time.sleep(self.laser_on_time/2)
         temp = []
-        for i in range(4096):
+        for i in range(256):
             temp.append(self.ADC.convert())
         result = sum(temp) / len(temp)
         return result
@@ -25,7 +25,7 @@ class Demodulator:
         time.sleep(self.laser_on_time/2)
 
         temp = []
-        for i in range(4096):
+        for i in range(256):
             temp.append(self.ADC.convert())
         result = sum(temp) / len(temp)
         return result
