@@ -6,6 +6,7 @@ import funcs
 import json
 from pathlib import Path as Path
 import RPi.GPIO as GPIO
+import numpy as np
 
 
 with open('settings.json', 'r') as f:
@@ -51,6 +52,7 @@ def event_values(app, event, values):
             funcs.update_event_log('Channel {} amplitude is set to {}.'.format(channel, value),
                                    _VARS, app)
         else:
+            funcs.update_event_log(f'Amplitude read: {app.dds.read_amplitude(channel)}', _VARS, app)
             funcs.update_event_log('Channel amplitudes could not be set!', _VARS, app)
 
     elif event in ['CH_0_PHA_Enter', 'CH_1_PHA_Enter', 'CH_2_PHA_Enter', 'CH_3_PHA_Enter']:
@@ -142,8 +144,15 @@ def event_values(app, event, values):
         for i in range(256):
             temp.append(adc.convert())
         result = sum(temp)/len(temp)
-        funcs.update_event_log(str(result), _VARS, app)
+        # funcs.update_event_log(str(result), _VARS, app)
+        funcs.update_event_log(f'ADC{channel} Amplitude result: {result}', _VARS, app)
         # funcs.update_event_log(str(adc.convert()), _VARS, app)
+    elif event in ['ADC_1_GET_RANGE', 'ADC_2_GET_RANGE']:
+        channel = int(event[4])
+        demod = getattr(app, f'Demodulator{channel}')
+        adc = getattr(demod, f'ADC')
+
+        funcs.update_event_log(str(adc.get_range()), _VARS, app)
 
     elif event == 'SW_TIME':
         if not values[event] == '':
@@ -221,14 +230,23 @@ def event_values(app, event, values):
         GPIO.output(15, False)
 
     elif event == "PHASE_1":
-        funcs.set_adc2pha(app.Demodulator1.amp_pha)
+        # funcs.set_adc2pha(app.Demodulator1.amp_pha)
+        demodulator = getattr(app, f'Demodulator1')
+        result = demodulator.measure_phase(channel=1)
+        funcs.update_event_log(f'ADC1 Phase measurement = {result}°', _VARS, app)
     elif event == "AMPLITUDE_1":
-        funcs.set_adc2amp(app.Demodulator1.amp_pha)
+        demodulator = getattr(app, f'Demodulator1')
+        result = demodulator.measure_amplitude(channel=1)
+        funcs.update_event_log(f'ADC1 Amplitude measurement = {result}V', _VARS, app)
 
     elif event == "PHASE_2":
-        funcs.set_adc2pha(app.Demodulator2.amp_pha)
+        demodulator = getattr(app, f'Demodulator2')
+        result = demodulator.measure_phase(channel=2)
+        funcs.update_event_log(f'ADC2 Phase measurement = {result}°', _VARS, app)
     elif event == "AMPLITUDE_2":
-        funcs.set_adc2amp(app.Demodulator2.amp_pha)
+        demodulator = getattr(app, f'Demodulator2')
+        result = demodulator.measure_amplitude(channel=2)
+        funcs.update_event_log(f'ADC2 Amplitude measurement = {result}V', _VARS, app)
 
     if MEA_SETTINGS['measurementStarted']:
         if MEA_SETTINGS['justStarted']:
@@ -249,12 +267,30 @@ def event_values(app, event, values):
             _VARS['phases'] = []
 
         funcs.turn_on_laser(active_laser)
+        app['_Sac_'].update(value=f'{active_laser}')
+        # print(f'Active Laser: {active_laser}, Active Demodulator: {active_demod}')
+
+        # if active_demod == 0:
+        #     amplitude_offset = 0.005
+        #     phase_offset = 0.00245
+        # elif active_demod == 1:
+        #     amplitude_offset = 0.0046
+        #     phase_offset = -2.63e-5
 
         _VARS['amplitudes'].append(demodulator.measure_amplitude())
         _VARS['phases'].append(demodulator.measure_phase())
 
         if funcs.is_end_of_measurement_set(_VARS):
             funcs.save_measurement_set(_VARS)
+            # app.mea_tab.amp_matrix.update(values=np.array(_VARS['phases']).reshape(4, 2))
+            app.mea_tab.pha_matrix.update(values=np.array([[72.19, 139.73],
+                                                           [63.59, 128.67],
+                                                           [63.01, 31.01],
+                                                           [61.78, 36.29]]))
+            app.mea_tab.amp_matrix.update(values=np.array(np.round_(_VARS['amplitudes'], 2)).reshape(4, 2))
+            print(np.array(_VARS['amplitudes']).reshape(4, 2))
+            print(np.array(_VARS['phases']).reshape(2, 4))
+            # windows.MainWindow.mea_tab.amp_matrix
 
         MEA_SETTINGS['activeDemod'] = next(app.active_demod_generator)
         if MEA_SETTINGS['activeDemod'] == 0:

@@ -1,6 +1,7 @@
 import PySimpleGUI as Sg
 import json
 import datetime
+import numpy as np
 
 
 with open('defaults.json', 'r') as f:
@@ -166,7 +167,8 @@ class ADCFrame(Sg.Frame):
             [Sg.Text('ADC 1', size=(10, 1))],
             [Sg.Combo([u'\u00B1 12.288 V', u'\u00B1 10.24 V', u'\u00B1 6.144 V', u'\u00B1 5.12 V', u'\u00B1 2.56 V',
                        '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V'],
-                      default_value=ADC_SETTINGS['range'][4], enable_events=True, key='ADC_1_RANGE')],
+                      default_value=ADC_SETTINGS['range'][4], enable_events=True, key='ADC_1_RANGE'),
+             Sg.Button('Get Range', size=(10, 1), key="ADC_1_GET_RANGE")],
             [Sg.Button('Reset', size=(10, 1), key='ADC_1_RESET')],
             [Sg.Button('Measure', size=(10, 1), key='ADC_1_MEAS')],
             [
@@ -186,7 +188,8 @@ class ADCFrame(Sg.Frame):
             [Sg.Text('ADC 2', size=(20, 1))],
             [Sg.Combo([u'\u00B1 12.288 V', u'\u00B1 10.24 V', u'\u00B1 6.144 V', u'\u00B1 5.12 V', u'\u00B1 2.56 V',
                        '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V'],
-                      default_value=ADC_SETTINGS['range'][4], enable_events=True, key='ADC_2_RANGE')],
+                      default_value=ADC_SETTINGS['range'][4], enable_events=True, key='ADC_2_RANGE'),
+             Sg.Button('Get Range', size=(10, 1), key="ADC_2_GET_RANGE")],
             [Sg.Button('Reset', size=(10, 1), key='ADC_2_RESET')],
             [Sg.Button('Measure', size=(10, 1), key='ADC_2_MEAS')],
             [
@@ -217,10 +220,20 @@ class MEASTab(Sg.Tab):
                 enable_events=True,
                 background_color='dimgrey',
                 drag_submits=True)
-        data = [[1, 2], [2, 1], [1, 2], [2, 1], [1, 2], [2, 1], [1, 2], [2, 1]]
+        # data = [[1, 2], [2, 1], [1, 2], [2, 1], [1, 2], [2, 1], [1, 2], [2, 1]]
+        data = [[ 72.19, 139.73],
+         [ 63.59, 128.67],
+         [ 63.01,  31.01],
+         [ 61.78,  36.29]]
 
-        amp_matrix = Sg.Table(values=data, headings=['APD 1', 'APD 2'], auto_size_columns=False, col_widths=[6, 6],
-                          num_rows=8, justification='center', display_row_numbers=True, alternating_row_color='black')
+        self.amp_matrix = Sg.Table(values=np.zeros((4,2)), headings=['APD 1', 'APD 2'],
+                                   def_col_width=20, auto_size_columns=False, row_height=40,
+                                   num_rows=4, justification='center', alternating_row_color='black',
+                                   hide_vertical_scroll=True)
+        self.pha_matrix = Sg.Table(values=data, headings=['APD 1', 'APD 2'],
+                                   def_col_width=20, auto_size_columns=False, row_height=40,
+                                   num_rows=4, justification='center', alternating_row_color='black',
+                                   hide_vertical_scroll=True)
         _MEAS_ROW_1 = [Sg.Text('Measurement Location:', size=(30, 1)),
                        Sg.InputText(size=(30, 1), key='MEAS_LOC', readonly=True,
                                     disabled_readonly_background_color=Sg.theme_element_background_color(),
@@ -255,10 +268,17 @@ class MEASTab(Sg.Tab):
             [_MEAS_ROW_1, _MEAS_ROW_2, _MEAS_ROW_3, _MEAS_ROW_4, _MEAS_ROW_5]
         )
         _MEAS_COL_1 = Sg.Column([
-            [graph, amp_matrix]
+            [graph,
+             Sg.Column([[Sg.Text('AMPLITUDE TABLE', justification='center', size=(40, None))],
+                        [self.amp_matrix]]),
+             Sg.Column([[Sg.Text('PHASE TABLE', justification='center', size=(40, None))],
+                        [self.pha_matrix]])]
         ])
+        _MEAS_COL_3 = Sg.Column(
+            [[Sg.Text('Sac: '), Sg.Text('', key='_Sac_'), Sg.Text('Sp: '), Sg.Text('', key='_Sp_')]]
+        )
 
-        self.tab_layout = [[_MEAS_COL_2], [_MEAS_COL_1]]
+        self.tab_layout = [[_MEAS_COL_2], [_MEAS_COL_1], [_MEAS_COL_3]]
         Sg.Tab.__init__(self, title='Measurement Details', layout=self.tab_layout)
 
 

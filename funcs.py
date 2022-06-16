@@ -327,7 +327,7 @@ def start_phase_calibration(demodulator, val_dict):
                     # time.sleep(0.1)
                     with open(file, 'a+') as csv_file:
                         writer = csv.writer(csv_file, delimiter=',')
-                        writer.writerow([phase, demodulator.measure_phase()])
+                        writer.writerow([phase, demodulator.measure_phase_voltage()])
 
 
 def start_amplitude_calibration(demodulator, val_dict):
@@ -384,7 +384,7 @@ def start_amplitude_calibration(demodulator, val_dict):
 
             with open(file, 'a+') as csv_file:
                 writer = csv.writer(csv_file, delimiter=',')
-                writer.writerow([amplitude1, demodulator.measure_amplitude()])
+                writer.writerow([amplitude1, demodulator.measure_amplitude_voltage()])
 
 
 def rmtree(root):

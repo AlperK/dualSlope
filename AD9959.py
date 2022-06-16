@@ -100,7 +100,7 @@ class AD9959():
         # setup the GPIO
         self.spi = spidev.SpiDev()
         self.spi.open(bus, device)
-        self.spi.max_speed_hz = 10000000
+        self.spi.max_speed_hz = 10_000_000
         
         gpio.setup(IO_UPDATE_PIN, gpio.OUT)
         gpio.setup(RST_PIN, gpio.OUT)
