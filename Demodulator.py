@@ -31,7 +31,7 @@ class Demodulator:
 
         temp = np.zeros(256)
         for i in range(256):
-            temp[i] = (self.ADC.convert())
+            temp[i] = self.ADC.convert()
         amplitude_voltage = temp.mean() * 1000
         amplitude = (amplitude_voltage - intercept) / slope
         return amplitude

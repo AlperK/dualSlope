@@ -144,6 +144,7 @@ def event_values(app, event, values):
         for i in range(256):
             temp.append(adc.convert())
         result = sum(temp)/len(temp)
+        result = demod.measure_phase_voltage()
         # funcs.update_event_log(str(result), _VARS, app)
         funcs.update_event_log(f'ADC{channel} Amplitude result: {result}', _VARS, app)
         # funcs.update_event_log(str(adc.convert()), _VARS, app)
