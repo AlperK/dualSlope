@@ -92,13 +92,14 @@ _register_len = {
 
 class AD9959:
 
-    def __init__(self, bus, device, IO_UPDATE_PIN, RST_PIN, PWR_DWN_PIN, ref_clk):
+    def __init__(self, bus, device, IO_UPDATE_PIN, RST_PIN, PWR_DWN_PIN,
+                 max_speed_hz=1e6, ref_clk=25e6):
         """Constructor. """
 
         # Setup the SPI
         self.spi = spidev.SpiDev()
         self.spi.open(bus, device)
-        self.spi.max_speed_hz = 1000000
+        self.spi.max_speed_hz = max_speed_hz
 
         # Setup the GPIO
         self.IO_UPDATE_PIN = IO_UPDATE_PIN

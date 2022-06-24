@@ -4,7 +4,7 @@ import time
 
 
 class ADS8685:
-    def __init__(self, bus, device, reset_pin):
+    def __init__(self, bus, device, reset_pin, max_speed_hz=1_000_000):
         self.pos_full_scale = None
         self.neg_full_scale = None
         self.full_scale = None
