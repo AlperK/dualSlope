@@ -52,6 +52,9 @@ class Demodulator:
     def __str__(self):
         return f'Demodulator-{self.channel}'
 
+    def __repr__(self):
+        return f'Demodulator-{self.channel} based on AD630. The amp_pha_pin is {self.amp_pha_pin}.'
+
     def __init__(self, adc: ADS8685, laser_on_time, settings, channel=None):
         """Initialize the Demodulator"""
         if channel is None:
@@ -149,3 +152,18 @@ class Demodulator:
         phase = (y / (2*np.pi*self.phase_coefficients['phi'])) - 90
 
         return -phase
+
+
+class Laser:
+    def __init__(self, wavelength, pin):
+        self.wavelength = wavelength
+        self.pin = pin
+        GPIO.setup(self.pin, GPIO.OUT)
+
+        self.turn_off()
+
+    def turn_on(self):
+        GPIO.output(self.pin, True)
+
+    def turn_off(self):
+        GPIO.output(self.pin, False)
