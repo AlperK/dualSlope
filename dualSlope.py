@@ -1,18 +1,20 @@
-import UI
+import ui.app as app
 import RPi.GPIO as GPIO
+import PySimpleGUI as Sg
 
-# TODO
-# See if dds.shutdown() and dds.wake_up() works.
-# Find a smart way to trim the 'measurement conditions.json'
 
 GPIO.setmode(GPIO.BOARD)
-app = UI.MainApplication()
+app = app.MainApplication()
 
 while True:
     event, values = app.read(timeout=0)
-    a = UI.event_values(app, event, values)
+    if event not in ['__TIMEOUT__', Sg.WIN_CLOSED]:
+        print(f'event: {event}, value: {values[event]}')
+    # a = UI.event_values(app, event, values)
     # print(event)
-    if a == -1:
+    # if a == -1:
+    #     break
+    if event == Sg.WIN_CLOSED:
         break
 
 GPIO.cleanup()

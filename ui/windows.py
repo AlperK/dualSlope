@@ -363,3 +363,5 @@ class DemodulatorTab(Sg.Tab):
         ]
 
         Sg.Tab.__init__(self, title='Demodulator Calibration', layout=self.layout)
+
+

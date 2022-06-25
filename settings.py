@@ -1,5 +1,4 @@
 import json
-import pathlib
 
 app_settings = {
     'theme': 'DarkGrey14',
@@ -60,7 +59,11 @@ with open('settings.json', 'w') as f:
 with open('defaults.json', 'w') as f:
     json.dump(settings, f)
 
+with open('app settings.json', 'w') as f:
+    json.dump(app_settings, f)
 
+with open('dds settings.json', 'w') as f:
+    json.dump(dds_settings, f)
 # with open('settings.json', 'r') as f:
 #     settings = json.load(f)
 #     APP_SETTINGS = settings['APP_SETTINGS']
