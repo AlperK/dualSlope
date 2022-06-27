@@ -19,6 +19,7 @@ class MainApplication(Sg.Window):
                             layout=[[Sg.Multiline(disabled=True,
                                                   key='__LOG__',
                                                   size=(610, 20),
+                                                  autoscroll=True,
                                                   )]]
                             )
         self.hwTabGroup = Sg.TabGroup(tab_location='left',

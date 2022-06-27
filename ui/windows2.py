@@ -80,7 +80,7 @@ class DDSFrame(Sg.Frame):
         _CHA_EN_COL = [
             [
                 Sg.Checkbox(text='Enable',
-                            default=True,
+                            default=DEF_DDS_SETTINGS['activeChannels'][channel],
                             key=f"__DDS_CHA_EN__{channel}",
                             enable_events=True)
             ]

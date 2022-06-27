@@ -16,6 +16,7 @@ while True:
     # if a == -1:
     #     break
     if event == Sg.WIN_CLOSED:
+        GPIO.cleanup()
         break
 
 GPIO.cleanup()
