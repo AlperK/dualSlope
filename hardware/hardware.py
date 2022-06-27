@@ -1,19 +1,26 @@
-import AD9959_v2
-import ADS8685
+from hardware.AD9959_v2 import AD9959 as AD9959
+from hardware.ADS8685 import ADS8685 as ADS8685
 import RPi.GPIO as GPIO
 import time
 import numpy as np
 
 
-class DDS:
+class DDS(AD9959):
     def __init__(self, bus, device, pins, max_speed):
         """Constructor for the DDS"""
-        self.dds = AD9959_v2.AD9959(bus=bus, device=device, max_speed_hz=max_speed,
-                                    IO_UPDATE_PIN=pins['IO_UP'],
-                                    RST_PIN=pins['RESET'],
-                                    PWR_DWN_PIN=pins['P_DOWN'],
-                                    ref_clk=25e6)
-        self.dds.init_dds(channels=[0, 1, 2, 3])
+        for pin in pins:
+            GPIO.setup(pins[pin], GPIO.OUT)
+        # self.dds = AD9959_v2.AD9959(bus=bus, device=device, max_speed_hz=max_speed,
+        #                             IO_UPDATE_PIN=pins['IO_UP'],
+        #                             RST_PIN=pins['RESET'],
+        #                             PWR_DWN_PIN=pins['P_DOWN'],
+        #                             ref_clk=25e6)
+        super().__init__(bus=bus, device=device, max_speed_hz=max_speed,
+                         IO_UPDATE_PIN=pins['IO_UP'],
+                         RST_PIN=pins['RESET'],
+                         PWR_DWN_PIN=pins['P_DOWN'],
+                         ref_clk=25e6)
+        self.init_dds(channels=[0, 1, 2, 3])
 
     def initialize(self, settings):
         """Initializes the DDS by setting the PLL Multiplier and the Channel Outputs."""
@@ -34,7 +41,7 @@ class DDS:
         r_f = float(r_f) * 1e6
         i_f = float(i_f) * 1e3
 
-        self.dds.set_output(rf_channels, value=r_f+i_f, var='frequency', io_update=True)
+        self.dds.set_output(rf_channels, value=r_f + i_f, var='frequency', io_update=True)
         self.dds.set_output(lo_channels, value=r_f, var='frequency', io_update=True)
 
     def load_settings(self, settings):
@@ -167,7 +174,7 @@ class Demodulator:
         x = (voltage - np.log(amplitude) * self.phase_coefficients['offset']) / \
             (self.phase_coefficients['A'] * self.phase_coefficients['freq'])
         y = np.arcsin(x)
-        phase = (y / (2*np.pi*self.phase_coefficients['phi'])) - 90
+        phase = (y / (2 * np.pi * self.phase_coefficients['phi'])) - 90
 
         return -phase
 
