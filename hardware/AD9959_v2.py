@@ -453,8 +453,7 @@ class AD9959:
         Setting ioupdate=True will issue an ioupdate to write the settings into the DDS registers.
         """
         assert (freqmult == 1 or freqmult in range(4, 21)), 'Multiplier must be 1 (off) or between 4 and 20'
-        assert (freqmult * self.refclock_freq > 99.999e6 and \
-                freqmult * self.refclock_freq < 500.001e6), \
+        assert (99.999e6 < freqmult * self.refclock_freq < 500.001e6), \
             'self.clock_frequency must lie between Min: 100MHz and Max 500MHz'
 
         # Read current state of FR1 register
