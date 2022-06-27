@@ -40,22 +40,21 @@ class DDS(AD9959):
         self.set_output(lo_channels, value=r_f, var='frequency', io_update=True)
 
     def load_settings(self, settings):
-        self.set_refclock(settings['refCLK'])
-        self.set_freqmult(settings['PLL_MUL'])
-        self.set_rf_if(r_f=settings['__DDS_RF__'],
-                       i_f=settings['__DDS_IF__'])
-        for channel in settings['activeChannels']:
-            self.dds.set_output(channel,
-                                value=settings['channelAmplitudes'][channel],
-                                var='amplitude',
-                                io_update=True)
-            self.dds.set_output(channel,
-                                value=settings['channelPhases'][channel],
-                                var='phase',
-                                io_update=True)
-            self.dds.set_current(channel,
-                                 settings['channelDividers'][channel],
-                                 ioupdate=True)
+        self.set_freqmult(settings['PLL_MUL'], ioupdate=True)
+        self.set_rf_if(r_f=settings['RF'],
+                       i_f=settings['IF'])
+        for channel in range(4):
+            self.set_output(channel,
+                            value=settings['channelAmplitudes'][channel],
+                            var='amplitude',
+                            io_update=True)
+            self.set_output(channel,
+                            value=settings['channelPhases'][channel],
+                            var='phase',
+                            io_update=True)
+            self.set_current(channel,
+                             settings['channelDividers'][channel],
+                             ioupdate=True)
 
 
 class ADC:
