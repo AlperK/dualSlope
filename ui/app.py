@@ -5,22 +5,30 @@ import ui.windows2 as windows
 
 with open('app settings.json', 'r') as f:
     APP_SETTINGS = json.load(f)
-with open('dds settings.json', 'r') as f:
-    DDS_SETTINGS = json.load(f)
+with open('default dds settings.json', 'r') as f:
+    DEF_DDS_SETTINGS = json.load(f)
 
 
 class MainApplication(Sg.Window):
     def __init__(self):
-        self.dds = hw.DDS(bus=0, device=0, pins=DDS_SETTINGS['pins'], max_speed=1_000_000)
+        self.dds = hw.DDS(bus=0, device=0, pins=DEF_DDS_SETTINGS['pins'], max_speed=1_000_000)
         self.theme = APP_SETTINGS['theme']
         self.title = APP_SETTINGS['title']
         self.win_size = (APP_SETTINGS['width'], APP_SETTINGS['height'])
+        self.log = Sg.Frame(title='Event Log',
+                            layout=[[Sg.Multiline(disabled=True,
+                                                  key='__LOG__',
+                                                  size=(610, 20),
+                                                  )]]
+                            )
+        self.hwTabGroup = Sg.TabGroup(tab_location='left',
+                                      layout=[
+                                          [windows.HardwareTab()],
+                                      ],
+                                      expand_x=True)
         self.layout = [
-            [Sg.TabGroup(tab_location='left',
-                         layout=[
-                             [windows.HardwareTab()],
-                                 ],)
-             ]
+            [self.hwTabGroup],
+            [Sg.Text('', size=(8, None)), self.log]
         ]
         super(MainApplication, self).__init__(title=self.title,
                                               size=self.win_size,
