@@ -12,6 +12,7 @@ default_dds_settings = {
     'IF': 1,
     'refClk': 25e6,
     'PLL_MUL': 20,
+    'activeChannels': [True, False, False, True],
     'channelFrequencies': [100.001e6, 100.001e6, 100e6, 100e6],
     'channelAmplitudes': [0.15, 0.1, 0.5, 0.5],
     'channelPhases': [0, 0, 0, 180],
