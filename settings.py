@@ -16,7 +16,11 @@ dds_settings = {
     'channelAmplitudes': [0.15, 0.1, 0.5, 0.5],
     'channelPhases': [0, 0, 0, 180],
     'channelDividers': [4, 4, 1, 1],
-
+    'pins': {
+        'IO_UP': 36,
+        'RESET': 37,
+        'P_DOWN': 33,
+    }
 }
 
 adc_settings = {
