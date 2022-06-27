@@ -4,28 +4,28 @@ import numpy as np
 
 with open('app settings.json', 'r') as f:
     APP_SETTINGS = json.load(f)
-with open('dds settings.json', 'r') as f:
-    DDS_SETTINGS = json.load(f)
+with open('default dds settings.json', 'r') as f:
+    DEF_DDS_SETTINGS = json.load(f)
 
 
 class HardwareTab(Sg.Tab):
     def __init__(self):
         self.layout = [[DDSFrame()]]
-        super(HardwareTab, self).__init__(title=f'Hardware \n Tab',
+        super(HardwareTab, self).__init__(title=f"Hardware \n Tab",
                                           layout=self.layout, )
 
 
 class DDSFrame(Sg.Frame):
     def __init__(self):
         _CHA_FRE_ROW = [
-            [Sg.Text(text='RF', size=(15, None)),
-             Sg.Input(default_text=DDS_SETTINGS['RF'],
+            [Sg.Text(text='RF (Mhz)', size=(15, None)),
+             Sg.Input(default_text=DEF_DDS_SETTINGS['RF'],
                       size=(15, None),
                       key='__DDS_RF__',
                       enable_events=False),
              Sg.Text('', size=(8, None)),
-             Sg.Text(text='CF', size=(15, None)),
-             Sg.Input(default_text=DDS_SETTINGS['IF'],
+             Sg.Text(text='IF (kHz)', size=(15, None)),
+             Sg.Input(default_text=DEF_DDS_SETTINGS['IF'],
                       size=(15, None),
                       key='__DDS_IF__',
                       enable_events=False),
@@ -41,7 +41,7 @@ class DDSFrame(Sg.Frame):
                        key='__DDS_RST__'),
              Sg.Text('PLL Mul'),
              Sg.Combo(values=list(np.arange(4, 21)),
-                      default_value=20,
+                      default_value=DEF_DDS_SETTINGS['PLL_MUL'],
                       enable_events=True,
                       key='__DDS_PLL_MUL__'), ]
         ]
@@ -51,12 +51,12 @@ class DDSFrame(Sg.Frame):
 
         _CHA_AMP_COL = [
             ([
-                Sg.Text(text=f'Channel {channel}',
+                Sg.Text(text=f"Channel {channel}",
                         size=(15, None)),
-                Sg.InputText(default_text=f'{channel}',
+                Sg.InputText(default_text=f"{DEF_DDS_SETTINGS['channelAmplitudes'][channel]}",
                              size=(15, None),
                              enable_events=False,
-                             key=f'__DDS_CHA_AMP__{channel}')
+                             key=f"__DDS_CHA_AMP__{channel}")
             ])
             for channel in range(4)]
         _CHA_AMP_FRA = Sg.Frame(title='DDS Amplitude Settings',
@@ -65,12 +65,12 @@ class DDSFrame(Sg.Frame):
 
         _CHA_PHA_COL = [
             [
-                Sg.Text(text=f'Channel {channel}',
+                Sg.Text(text=f"Channel {channel} (°)",
                         size=(15, None)),
-                Sg.InputText(default_text=f'{channel}',
+                Sg.InputText(default_text=f"{DEF_DDS_SETTINGS['channelPhases'][channel]}",
                              size=(15, None),
                              enable_events=False,
-                             key=f'__DDS_CHA_PHA__{channel}')
+                             key=f"__DDS_CHA_PHA__{channel}")
             ]
             for channel in range(4)]
         _CHA_PHA_FRA = Sg.Frame(title='DDS Phase Settings',
@@ -81,7 +81,7 @@ class DDSFrame(Sg.Frame):
             [
                 Sg.Checkbox(text='Enable',
                             default=True,
-                            key=f'__DDS_CHA_EN__{channel}',
+                            key=f"__DDS_CHA_EN__{channel}",
                             enable_events=True)
             ]
             for channel in range(4)

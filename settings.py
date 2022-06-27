@@ -7,7 +7,7 @@ app_settings = {
     'title': 'Dual Slope'
 }
 
-dds_settings = {
+default_dds_settings = {
     'RF': 100,
     'IF': 1,
     'refClk': 25e6,
@@ -51,7 +51,7 @@ pin_settings = {
 
 settings = {
     'APP_SETTINGS': app_settings,
-    'DDS_SETTINGS': dds_settings,
+    'DDS_SETTINGS': default_dds_settings,
     'ADC_SETTINGS': adc_settings,
     'MEA_SETTINGS': mea_settings,
     'LAS_SETTINGS': las_settings,
@@ -66,8 +66,8 @@ with open('defaults.json', 'w') as f:
 with open('app settings.json', 'w') as f:
     json.dump(app_settings, f)
 
-with open('dds settings.json', 'w') as f:
-    json.dump(dds_settings, f)
+with open('default dds settings.json', 'w') as f:
+    json.dump(default_dds_settings, f)
 # with open('settings.json', 'r') as f:
 #     settings = json.load(f)
 #     APP_SETTINGS = settings['APP_SETTINGS']
