@@ -30,5 +30,13 @@ def dds_events(app, event, value):
         app['IF'].update(value=value)
         app['PLL_MUL'].update(value=value)
 
+    elif event in [f'__DDS_CHA_AMP__{channel}' for channel in range(4)]:
+        channel = int(event[-1])
+        app.dds.set_output(channels=channel, value=float(value), var='amplitude', io_update=True)
+
+    elif event in [f'__DDS_CHA_PHA__{channel}' for channel in range(4)]:
+        channel = int(event[-1])
+        app.dds.set_output(channels=channel, value=float(value), var='phase', io_update=True)
+
     else:
-        print(f'Event: {event}')
+        print(f'Event \'{event}\' unrecognized.')
