@@ -18,10 +18,16 @@ class DDSFrame(Sg.Frame):
     def __init__(self):
         _CHA_FRE_ROW = [
             [Sg.Text(text='RF', size=(15, None)),
-             Sg.Input(default_text=DDS_SETTINGS['RF'], size=(15, None), key='__DDS_RF__'),
+             Sg.Input(default_text=DDS_SETTINGS['RF'],
+                      size=(15, None),
+                      key='__DDS_RF__',
+                      enable_events=False),
              Sg.Text('', size=(8, None)),
              Sg.Text(text='CF', size=(15, None)),
-             Sg.Input(default_text=DDS_SETTINGS['IF'], size=(15, None), key='__DDS_IF__'),
+             Sg.Input(default_text=DDS_SETTINGS['IF'],
+                      size=(15, None),
+                      key='__DDS_IF__',
+                      enable_events=False),
              ]
         ]
         _CHA_FRE_FRA = Sg.Frame(title='DDS Frequency Settings',
@@ -34,7 +40,7 @@ class DDSFrame(Sg.Frame):
                         size=(15, None)),
                 Sg.InputText(default_text=f'{channel}',
                              size=(15, None),
-                             enable_events=True,
+                             enable_events=False,
                              key=f'__DDS_CHA_AMP__{channel}')
             ])
             for channel in range(4)]
@@ -48,7 +54,7 @@ class DDSFrame(Sg.Frame):
                         size=(15, None)),
                 Sg.InputText(default_text=f'{channel}',
                              size=(15, None),
-                             enable_events=True,
+                             enable_events=False,
                              key=f'__DDS_CHA_PHA__{channel}')
             ]
             for channel in range(4)]
