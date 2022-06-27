@@ -1,5 +1,6 @@
 import PySimpleGUI as Sg
 import json
+import numpy as np
 
 with open('app settings.json', 'r') as f:
     APP_SETTINGS = json.load(f)
@@ -33,6 +34,20 @@ class DDSFrame(Sg.Frame):
         _CHA_FRE_FRA = Sg.Frame(title='DDS Frequency Settings',
                                 layout=_CHA_FRE_ROW,
                                 size=(610, 50))
+        _DDS_SET_ROW = [
+            [Sg.Button(button_text='Reset',
+                       size=(10, 5),
+                       enable_events=True,
+                       key='__DDS_RST__'),
+             Sg.Text('PLL Mul'),
+             Sg.Combo(values=list(np.arange(4, 21)),
+                      default_value=20,
+                      enable_events=True,
+                      key='__DDS_PLL_MUL__'), ]
+        ]
+        _DDS_SET_FRA = Sg.Frame(title='Misc',
+                                layout=_DDS_SET_ROW,
+                                size=(300, 50))
 
         _CHA_AMP_COL = [
             ([
@@ -78,10 +93,8 @@ class DDSFrame(Sg.Frame):
         self.layout = [
             [
                 Sg.Column(layout=[
-                    [_CHA_FRE_FRA],
-                    [_CHA_AMP_FRA,
-                     _CHA_PHA_FRA,
-                     _CHA_EN_FRA]])
+                    [_CHA_FRE_FRA, _DDS_SET_FRA],
+                    [_CHA_AMP_FRA, _CHA_PHA_FRA, _CHA_EN_FRA]])
             ]
         ]
 

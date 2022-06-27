@@ -10,11 +10,6 @@ class DDS(AD9959):
         """Constructor for the DDS"""
         for pin in pins:
             GPIO.setup(pins[pin], GPIO.OUT)
-        # self.dds = AD9959_v2.AD9959(bus=bus, device=device, max_speed_hz=max_speed,
-        #                             IO_UPDATE_PIN=pins['IO_UP'],
-        #                             RST_PIN=pins['RESET'],
-        #                             PWR_DWN_PIN=pins['P_DOWN'],
-        #                             ref_clk=25e6)
         super().__init__(bus=bus, device=device, max_speed_hz=max_speed,
                          IO_UPDATE_PIN=pins['IO_UP'],
                          RST_PIN=pins['RESET'],
@@ -41,14 +36,14 @@ class DDS(AD9959):
         r_f = float(r_f) * 1e6
         i_f = float(i_f) * 1e3
 
-        self.dds.set_output(rf_channels, value=r_f + i_f, var='frequency', io_update=True)
-        self.dds.set_output(lo_channels, value=r_f, var='frequency', io_update=True)
+        self.set_output(rf_channels, value=r_f + i_f, var='frequency', io_update=True)
+        self.set_output(lo_channels, value=r_f, var='frequency', io_update=True)
 
     def load_settings(self, settings):
-        self.dds.set_refclock(settings['refCLK'])
-        self.dds.set_freqmult(settings['PLL_MUL'])
-        self.set_rf_if(r_f=settings['RF'],
-                       i_f=settings['IF'])
+        self.set_refclock(settings['refCLK'])
+        self.set_freqmult(settings['PLL_MUL'])
+        self.set_rf_if(r_f=settings['__DDS_RF__'],
+                       i_f=settings['__DDS_IF__'])
         for channel in settings['activeChannels']:
             self.dds.set_output(channel,
                                 value=settings['channelAmplitudes'][channel],
