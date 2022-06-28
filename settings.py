@@ -24,9 +24,32 @@ default_dds_settings = {
     }
 }
 
-adc_settings = {
-    'range': [u'\u00B1 12.288 V', u'\u00B1 10.24 V', u'\u00B1 6.144 V', u'\u00B1 5.12 V', u'\u00B1 2.56 V',
-              '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V'],
+default_adc_settings = {
+    'rangeList': [u'\u00B1 12.288 V', u'\u00B1 10.24 V', u'\u00B1 6.144 V', u'\u00B1 5.12 V', u'\u00B1 2.56 V',
+                  '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V'],
+    'RST_PIN': [22, 18]
+}
+
+default_dem_settings = {
+    'laserOnTime': 100e-3,
+    'Demodulator-1': {
+        'PHA_AMP_PIN': 29,
+        'amplitudeCoefficients': {'slope': 0.3009,
+                                  'intercept': 2.488},
+        'phaseCoefficients': {'A': 300.466,
+                              'freq': 0.00277773,
+                              'phi': 0,
+                              'offset': -0.912},
+    },
+    'Demodulator-2': {
+        'PHA_AMP_PIN': 31,
+        'amplitudeCoefficients': {'slope': 0.3009,
+                                  'intercept': 2.488},
+        'phaseCoefficients': {'A': 300.466,
+                              'freq': 0.00277773,
+                              'phi': 0,
+                              'offset': -0.912},
+    }
 }
 
 mea_settings = {
@@ -53,7 +76,7 @@ pin_settings = {
 settings = {
     'APP_SETTINGS': app_settings,
     'DDS_SETTINGS': default_dds_settings,
-    'ADC_SETTINGS': adc_settings,
+    'ADC_SETTINGS': default_adc_settings,
     'MEA_SETTINGS': mea_settings,
     'LAS_SETTINGS': las_settings,
     'PIN_SETTINGS': pin_settings,
@@ -69,10 +92,13 @@ with open('app settings.json', 'w') as f:
 
 with open('default dds settings.json', 'w') as f:
     json.dump(default_dds_settings, f)
+with open('default adc settings.json', 'w') as f:
+    json.dump(default_adc_settings, f)
+with open('default dem settings.json', 'w') as f:
+    json.dump(default_dem_settings, f)
 # with open('settings.json', 'r') as f:
 #     settings = json.load(f)
 #     APP_SETTINGS = settings['APP_SETTINGS']
 #     DDS_SETTINGS = settings['DDS_SETTINGS']
 # print(APP_SETTINGS)
 # print(DDS_SETTINGS)
-
