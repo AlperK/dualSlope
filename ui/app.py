@@ -46,11 +46,17 @@ class MainApplication(Sg.Window):
         self['__DDS_IF__'].bind("<Return>", key_modifier='')
 
         self.dds = hw.DDS(bus=1, device=0, pins=DEF_DDS_SETTINGS['pins'], max_speed=1_000_000)
-        self.demodulator1 = hw.Demodulator(adc=hw.ADS8685(bus=0, device=0,
-                                                          reset_pin=DEF_ADC_SETTINGS['RST_PIN'][0],
-                                                          max_speed_hz=1_000_000),
+        self.dds.initialize(settings=DEF_DDS_SETTINGS)
+        self.demodulator1 = hw.Demodulator(adc=hw.ADC(bus=0, device=0,
+                                                      reset_pin=DEF_ADC_SETTINGS['RST_PIN'][0],
+                                                      max_speed=1_000_000,
+                                                      channel=1),
                                            settings=DEF_DEM_SETTINGS)
-        self.demodulator2 = hw.Demodulator(adc=hw.ADS8685(bus=0, device=1,
-                                                          reset_pin=DEF_ADC_SETTINGS['RST_PIN'][1],
-                                                          max_speed_hz=1_000_000),
+        self.demodulator2 = hw.Demodulator(adc=hw.ADC(bus=0, device=1,
+                                                      reset_pin=DEF_ADC_SETTINGS['RST_PIN'][1],
+                                                      max_speed=1_000_000,
+                                                      channel=1),
                                            settings=DEF_DEM_SETTINGS)
+
+        self.demodulator1.adc.initialize(settings=DEF_ADC_SETTINGS)
+        self.demodulator2.adc.initialize(settings=DEF_ADC_SETTINGS)

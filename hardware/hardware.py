@@ -19,13 +19,14 @@ class DDS(AD9959):
 
     def initialize(self, settings):
         """Initializes the DDS by setting the PLL Multiplier and the Channel Outputs."""
-        self.dds.set_freqmult(settings['PLL_MUL'], ioupdate=True)
+        self.set_freqmult(settings['PLL_MUL'], ioupdate=True)
+        self.set_refclock(settings['refClk'])
 
         for channel in range(4):
-            self.dds.set_output(channel, value=settings['channelFrequencies'][channel], var='frequency', io_update=True)
-            self.dds.set_output(channel, value=settings['channelAmplitudes'][channel], var='amplitude', io_update=True)
-            self.dds.set_output(channel, value=settings['channelPhases'][channel], var='phase', io_update=True)
-            self.dds.set_current(channel, divider=settings['channelDividers'][channel])
+            self.set_output(channel, value=settings['channelFrequencies'][channel], var='frequency', io_update=True)
+            self.set_output(channel, value=settings['channelAmplitudes'][channel], var='amplitude', io_update=True)
+            self.set_output(channel, value=settings['channelPhases'][channel], var='phase', io_update=True)
+            self.set_current(channel, divider=settings['channelDividers'][channel])
 
     def set_rf_if(self, r_f, i_f, rf_channels=None, lo_channels=None):
         """Sets the channel frequencies for the RF and LO signals on the board."""
@@ -57,7 +58,7 @@ class DDS(AD9959):
                              ioupdate=True)
 
 
-class ADC:
+class ADC(ADS8685):
     def __str__(self):
         return f'ADC-{self.channel}'
 
@@ -67,12 +68,16 @@ class ADC:
             self.channel = 1
         else:
             self.channel = channel
-        self.adc = ADS8685(bus=bus, device=device, reset_pin=reset_pin, max_speed_hz=max_speed)
+
+        super(ADC, self).__init__(bus=bus, device=device,
+                                  reset_pin=reset_pin,
+                                  max_speed_hz=max_speed)
+        # self.adc = ADS8685(bus=bus, device=device, reset_pin=reset_pin, max_speed_hz=max_speed)
 
     def initialize(self, settings):
         """Initialize the ADC"""
-        self.adc.reset()
-        self.adc.set_range(settings['defaultRange'])
+        self.reset()
+        self.set_range(settings['defaultRange'])
 
 
 class Demodulator:
