@@ -7,11 +7,14 @@ with open('app settings.json', 'r') as f:
     APP_SETTINGS = json.load(f)
 with open('default dds settings.json', 'r') as f:
     DEF_DDS_SETTINGS = json.load(f)
+with open('default adc settings.json', 'r') as f:
+    DEF_ADC_SETTINGS = json.load(f)
+with open('default dem settings.json', 'r') as f:
+    DEF_DEM_SETTINGS = json.load(f)
 
 
 class MainApplication(Sg.Window):
     def __init__(self):
-        self.dds = hw.DDS(bus=0, device=0, pins=DEF_DDS_SETTINGS['pins'], max_speed=1_000_000)
         self.theme = APP_SETTINGS['theme']
         self.title = APP_SETTINGS['title']
         self.win_size = (APP_SETTINGS['width'], APP_SETTINGS['height'])
@@ -41,3 +44,13 @@ class MainApplication(Sg.Window):
             self[f'__DDS_CHA_PHA__{channel}'].bind("<Return>", key_modifier='')
         self['__DDS_RF__'].bind("<Return>", key_modifier='')
         self['__DDS_IF__'].bind("<Return>", key_modifier='')
+
+        self.dds = hw.DDS(bus=1, device=0, pins=DEF_DDS_SETTINGS['pins'], max_speed=1_000_000)
+        self.demodulator1 = hw.Demodulator(adc=hw.ADS8685(bus=0, device=0,
+                                                          reset_pin=DEF_ADC_SETTINGS['RST_PIN'][0],
+                                                          max_speed_hz=1_000_000),
+                                           settings=DEF_DEM_SETTINGS)
+        self.demodulator2 = hw.Demodulator(adc=hw.ADS8685(bus=0, device=1,
+                                                          reset_pin=DEF_ADC_SETTINGS['RST_PIN'][1],
+                                                          max_speed_hz=1_000_000),
+                                           settings=DEF_DEM_SETTINGS)
