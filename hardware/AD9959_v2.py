@@ -201,6 +201,33 @@ class AD9959:
 
         cfr_bytes = self._read('CFR')
 
+    def enable_channel(self, channel):
+        """
+        Enables a channel by resetting the DAC power down bit in the CFR register
+        :param channel: Channel to enable.
+        :return:
+        """
+        self._set_channels(channel)
+
+        cfr_bytes = self._read('CFR')
+        cfr_bytes[-1] &= 0b10111111
+
+        self._write('CFR', cfr_bytes)
+        self._io_update()
+
+    def disable_channel(self, channel):
+        """
+        Disables a channel by setting the DAC power down bit in the CFR register
+        :param channel: Channel to enable.
+        :return:
+        """
+        self._set_channels(channel)
+        cfr_bytes = self._read('CFR')
+        cfr_bytes[-1] |= 0b01000000
+
+        self._write('CFR', cfr_bytes)
+        self._io_update()
+
     def set_freqsweeptime(self, channels, start_freq, end_freq, sweeptime, no_dwell=False, ioupdate=False,
                           trigger=False):
         """Activates linear frequency sweep mode. 
