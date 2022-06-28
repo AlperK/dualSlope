@@ -14,6 +14,7 @@ class HardwareTab(Sg.Tab):
     """
     The tab that includes all the Frames related to the hardware
     """
+
     def __init__(self):
         self.layout = [[DDSFrame()],
                        [DemodulatorFrame()]]
@@ -25,6 +26,7 @@ class DDSFrame(Sg.Frame):
     """
     The Frame that includes all the Elements related to the DDS
     """
+
     def __init__(self):
         # RF and IF frequency settings
         _CHA_FRE_ROW = [
@@ -97,7 +99,7 @@ class DDSFrame(Sg.Frame):
              Sg.Combo(values=[1, 2, 4, 8],
                       default_value=DEF_DDS_SETTINGS['channelDividers'][channel],
                       key=f'__DDS_CHA_DIV__{channel}',
-                      enable_events=True),]
+                      enable_events=True), ]
             for channel in range(4)
         ]
         _CHA_DIV_FRA = Sg.Frame(title='Channel Dividers',
@@ -133,6 +135,7 @@ class DemodulatorFrame(Sg.Frame):
     """
     The Frame that includes all the Elements related to the Demodulators
     """
+
     def __init__(self):
         self.title = 'Demodulator Controls'
 
@@ -197,7 +200,7 @@ class DemodulatorFrame(Sg.Frame):
                 Sg.Button('Measure', key='__DEM_MEA__2', enable_events=True),
                 Sg.Checkbox('Raw', default=False, key='__DEM_RAW__2', enable_events=True)
             ],
-            ])
+        ])
         _DEM_FRA_2 = Sg.Frame(title='Demodulator-2 Settings',
                               layout=[
                                   [_DEM_COL_2]
