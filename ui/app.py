@@ -19,6 +19,7 @@ class MainApplication(Sg.Window):
     """
     def __init__(self):
         # General window settings
+        Sg.theme(APP_SETTINGS['theme'])
         self.theme = APP_SETTINGS['theme']
         self.title = APP_SETTINGS['title']
         self.win_size = (APP_SETTINGS['width'], APP_SETTINGS['height'])
