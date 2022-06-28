@@ -72,11 +72,24 @@ def dds_events(app, event, values):
 
     elif event in [f'__DDS_CHA_EN__{channel}' for channel in range(4)]:
         channel = int(event[-1])
+
         if values[event]:
+            app.dds.enable_channel(channel)
             app['__LOG__'].update(f'Channel {channel} enabled.\n', append=True)
         else:
+            app.dds.disable_channel(channel)
             app['__LOG__'].update(f'Channel {channel} disabled.\n', append=True)
 
+    elif event in [f'__DDS_CHA_DIV__{channel}' for channel in range(4)]:
+        channel = int(event[-1])
+        app.dds.set_current(channels=channel, divider=int(values[event]), ioupdate=True)
+
+        app['__LOG__'].update(f'Channel {channel} divider set.\n', append=True)
+    elif event in ['__DDS_RF__', '__DDS_IF__']:
+        app.dds.set_rf_if(r_f=float(values['__DDS_RF__']),
+                          i_f=float(values['__DDS_IF__']),
+                          rf_channels=[0, 1],
+                          lo_channels=[2, 3])
     else:
         print(f'Event \'{event}\' unrecognized.')
 
@@ -87,12 +100,15 @@ def adc_events(app, event, values):
         new_range = DEF_ADC_SETTINGS['rangeList'].index(values[event])
         if new_range >= 5:
             new_range += 3
+        old_range = getattr(getattr(app, f'demodulator{channel}'), 'adc').get_range()
+        getattr(getattr(app, f'demodulator{channel}'), 'adc').set_range(new_range)
 
         app['__LOG__'].update(f"Set ADC-{channel} range to {values[event]}.\n", append=True)
+        app['__LOG__'].update(f"ADC-{channel} old range was {old_range}.\n", append=True)
 
     elif event in [f'__ADC_RST__{channel}' for channel in range(1, 3)]:
         channel = int(event[-1])
-        getattr(app, f'demodulator{channel}').adc.reset()
+        getattr(getattr(app, f'demodulator{channel}'), 'adc').reset()
 
         app['__LOG__'].update(f'ADC-{channel} is reset.\n', append=True)
 
