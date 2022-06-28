@@ -58,12 +58,20 @@ class DDS(AD9959):
 
 
 class ADC:
-    def __init__(self, bus, device, reset_pin, max_speed):
+    def __str__(self):
+        return f'ADC-{self.channel}'
+
+    def __init__(self, bus, device, reset_pin, max_speed, channel=None):
         """Constructor for the ADC"""
-        self.adc = ADS8685.ADS8685(bus=bus, device=device, reset_pin=reset_pin, max_speed_hz=max_speed)
+        if channel is None:
+            self.channel = 1
+        else:
+            self.channel = channel
+        self.adc = ADS8685(bus=bus, device=device, reset_pin=reset_pin, max_speed_hz=max_speed)
 
     def initialize(self, settings):
         """Initialize the ADC"""
+        self.adc.reset()
         self.adc.set_range(settings['defaultRange'])
 
 
@@ -74,22 +82,22 @@ class Demodulator:
     def __repr__(self):
         return f'Demodulator-{self.channel} based on AD630. The amp_pha_pin is {self.amp_pha_pin}.'
 
-    def __init__(self, adc: ADS8685, laser_on_time, settings, channel=None):
+    def __init__(self, adc: ADS8685, settings, channel=None):
         """Initialize the Demodulator"""
         if channel is None:
-            self.channel = 0
+            self.channel = 1
         else:
             self.channel = channel
 
         self.adc = adc
-        self.laser_on_time = laser_on_time
+        self.laser_on_time = settings['laserOnTime']
         self.integration_number = 1
 
-        self.amp_pha_pin = settings[str(self)]['amp_pha_pin']
+        self.amp_pha_pin = settings[str(self)]['PHA_AMP_PIN']
         GPIO.setup(self.amp_pha_pin, GPIO.OUT)
 
-        self.amplitude_coefficients = settings[str(self)]['amplitude_coefficients']
-        self.phase_coefficients = settings[str(self)]['phase_coefficients']
+        self.amplitude_coefficients = settings[str(self)]['amplitudeCoefficients']
+        self.phase_coefficients = settings[str(self)]['phaseCoefficients']
 
     def set_integration_number(self, n):
         """
@@ -123,10 +131,9 @@ class Demodulator:
         time.sleep(self.laser_on_time / 2)
 
         temp = np.zeros(self.integration_number)
-        for i in range(temp):
+        for i in range(self.integration_number):
             temp[i] = self.adc.convert()
         voltage = temp.mean() * 1000
-
         if not raw:
             amplitude = (voltage - self.amplitude_coefficients['intercept']) / self.amplitude_coefficients['slope']
             return amplitude
@@ -144,7 +151,7 @@ class Demodulator:
         time.sleep(self.laser_on_time / 2)
 
         temp = np.zeros(self.integration_number)
-        for i in range(temp):
+        for i in range(self.integration_number):
             temp[i] = self.adc.convert()
         voltage = temp.mean()
 
