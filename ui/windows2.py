@@ -180,8 +180,7 @@ class DemodulatorFrame(Sg.Frame):
                 Sg.Button('Measure', key='__DEM_MEA__2', enable_events=True),
                 Sg.Checkbox('Raw', default=False, key='__DEM_RAW__2', enable_events=True)
             ],
-            ]
-        )
+            ])
         _DEM_FRA_2 = Sg.Frame(title='Demodulator-2 Settings',
                               layout=[
                                   [_DEM_COL_2]

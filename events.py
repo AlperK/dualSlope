@@ -85,11 +85,13 @@ def dds_events(app, event, values):
         app.dds.set_current(channels=channel, divider=int(values[event]), ioupdate=True)
 
         app['__LOG__'].update(f'Channel {channel} divider set.\n', append=True)
+
     elif event in ['__DDS_RF__', '__DDS_IF__']:
         app.dds.set_rf_if(r_f=float(values['__DDS_RF__']),
                           i_f=float(values['__DDS_IF__']),
                           rf_channels=[0, 1],
                           lo_channels=[2, 3])
+
     else:
         print(f'Event \'{event}\' unrecognized.')
 
@@ -117,12 +119,14 @@ def dem_events(app, event, values):
     if event in [f'__DEM_SET_AMP__{channel}' for channel in range(1, 3)]:
         channel = int(event[-1])
         getattr(app, f'demodulator{channel}').set2amp()
-        app['__LOG__'].update(f'Demodulator-{channel} set to amplitude mode.\n', append=True)
+        app['__LOG__'].update(f'Demodulator-{channel} set to amplitude mode.\n',
+                              append=True)
 
     elif event in [f'__DEM_SET_PHA__{channel}' for channel in range(1, 3)]:
         channel = int(event[-1])
         getattr(app, f'demodulator{channel}').set2pha()
-        app['__LOG__'].update(f'Demodulator-{channel} set to phase mode.\n', append=True)
+        app['__LOG__'].update(f'Demodulator-{channel} set to phase mode.\n',
+                              append=True)
 
     elif event in [f'__DEM_MEA__{channel}' for channel in range(1, 3)]:
         channel = int(event[-1])

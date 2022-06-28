@@ -3,6 +3,7 @@ import RPi.GPIO as GPIO
 import PySimpleGUI as Sg
 from events import event_handler
 
+# TODO
 
 GPIO.setmode(GPIO.BOARD)
 app = app.MainApplication()
