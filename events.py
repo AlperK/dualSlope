@@ -35,6 +35,13 @@ def event_handler(app, event, values):
 
 
 def dds_events(app, event, values):
+    """
+    Handles the events related to the DDS
+    :param app: The MainWindow
+    :param event: The event
+    :param values: The values dictionary
+    :return: 
+    """
     if event == '__DDS_P_DWN__':
         if values[event]:
             app.dds.shutdown()
@@ -97,6 +104,13 @@ def dds_events(app, event, values):
 
 
 def adc_events(app, event, values):
+    """
+    Handles the events related to the ADCs
+    :param app: The MainWindow
+    :param event: The event
+    :param values: The values dictionary
+    :return: 
+    """
     if event in [f'__ADC_RANGE__{channel}' for channel in range(1, 3)]:
         channel = int(event[-1])
         new_range = DEF_ADC_SETTINGS['rangeList'].index(values[event])
@@ -116,6 +130,13 @@ def adc_events(app, event, values):
 
 
 def dem_events(app, event, values):
+    """
+    Handles the events related to the Demodulators
+    :param app: The MainWindow
+    :param event: The event
+    :param values: The values dictionary
+    :return: 
+    """
     if event in [f'__DEM_SET_AMP__{channel}' for channel in range(1, 3)]:
         channel = int(event[-1])
         getattr(app, f'demodulator{channel}').set2amp()
