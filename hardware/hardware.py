@@ -41,9 +41,20 @@ class DDS(AD9959):
         self.set_output(lo_channels, value=r_f, var='frequency', io_update=True)
 
     def load_settings(self, settings):
+        """
+        Load the settings into the DDS
+        :param settings: A dictionary that contains the settings with the appropriate keys
+        :return:
+        """
+
+        # Set the PLL
         self.set_freqmult(settings['PLL_MUL'], ioupdate=True)
+
+        # Set the RF and IF
         self.set_rf_if(r_f=settings['RF'],
                        i_f=settings['IF'])
+
+        # Set the channel amplitudes, phases and dividers
         for channel in range(4):
             self.set_output(channel,
                             value=settings['channelAmplitudes'][channel],
