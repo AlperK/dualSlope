@@ -4,7 +4,9 @@ import json
 
 
 with open('default dds settings.json') as f:
-    DEF_DDS_SET = json.load(f)
+    DEF_DDS_SETTINGS = json.load(f)
+with open('default adc settings.json') as f:
+    DEF_ADC_SETTINGS = json.load(f)
 
 
 def event_handler(app, event, values):
@@ -19,10 +21,17 @@ def event_handler(app, event, values):
         except KeyError:
             value = None
         print(f'Event Group: {event_group}')
+        print(f'Event : {event}')
         print(f'Event Value: {value}')
 
         if event_group == 'DDS':
             dds_events(app, event, values)
+
+        elif event_group == 'ADC':
+            adc_events(app, event, values)
+
+        elif event_group == 'DEM':
+            dem_events(app, event, values)
 
 
 def dds_events(app, event, values):
@@ -36,7 +45,7 @@ def dds_events(app, event, values):
 
     elif event == '__DDS_RST__':
         app.dds.reset()
-        app.dds.load_settings(settings=DEF_DDS_SET)
+        app.dds.load_settings(settings=DEF_DDS_SETTINGS)
 
         app['__DDS_RF__'].update(value=values['__DDS_RF__'])
         app['__DDS_IF__'].update(value=values['__DDS_IF__'])
@@ -70,3 +79,42 @@ def dds_events(app, event, values):
 
     else:
         print(f'Event \'{event}\' unrecognized.')
+
+
+def adc_events(app, event, values):
+    if event in [f'__ADC_RANGE__{channel}' for channel in range(1, 3)]:
+        channel = int(event[-1])
+        new_range = DEF_ADC_SETTINGS['rangeList'].index(values[event])
+        if new_range >= 5:
+            new_range += 3
+
+        app['__LOG__'].update(f"Set ADC-{channel} range to {values[event]}.\n", append=True)
+
+    elif event in [f'__ADC_RST__{channel}' for channel in range(1, 3)]:
+        channel = int(event[-1])
+        getattr(app, f'demodulator{channel}').adc.reset()
+
+        app['__LOG__'].update(f'ADC-{channel} is reset.\n', append=True)
+
+
+def dem_events(app, event, values):
+    if event in [f'__DEM_SET_AMP__{channel}' for channel in range(1, 3)]:
+        channel = int(event[-1])
+        getattr(app, f'demodulator{channel}').set2amp()
+        app['__LOG__'].update(f'Demodulator-{channel} set to amplitude mode.\n', append=True)
+
+    elif event in [f'__DEM_SET_PHA__{channel}' for channel in range(1, 3)]:
+        channel = int(event[-1])
+        getattr(app, f'demodulator{channel}').set2pha()
+        app['__LOG__'].update(f'Demodulator-{channel} set to phase mode.\n', append=True)
+
+    elif event in [f'__DEM_MEA__{channel}' for channel in range(1, 3)]:
+        channel = int(event[-1])
+        if values[f'__DEM_SET_AMP__{channel}']:
+            result = getattr(app, f'demodulator{channel}').measure_amplitude(raw=values[f'__DEM_RAW__{channel}'])
+            app['__LOG__'].update(f'Demodulator-{channel} measurement result: {result}.\n', append=True)
+            app['__LOG__'].update(f"Raw: {values[f'__DEM_RAW__{channel}']}.\n", append=True)
+        elif values[f'__DEM_SET_PHA__{channel}']:
+            result = getattr(app, f'demodulator{channel}').measure_phase(raw=values[f'__DEM_RAW__{channel}'])
+            app['__LOG__'].update(f'Demodulator-{channel} measurement result: {result}.\n', append=True)
+            app['__LOG__'].update(f"Raw: {values[f'__DEM_RAW__{channel}']}.\n", append=True)
