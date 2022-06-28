@@ -12,7 +12,7 @@ default_dds_settings = {
     'IF': 1,
     'refClk': 25e6,
     'PLL_MUL': 20,
-    'activeChannels': [True, False, False, True],
+    'activeChannels': [True, True, True, True],
     'channelFrequencies': [100.001e6, 100.001e6, 100e6, 100e6],
     'channelAmplitudes': [0.15, 0.1, 0.5, 0.5],
     'channelPhases': [0, 0, 0, 180],
@@ -27,6 +27,7 @@ default_dds_settings = {
 default_adc_settings = {
     'rangeList': [u'\u00B1 12.288 V', u'\u00B1 10.24 V', u'\u00B1 6.144 V', u'\u00B1 5.12 V', u'\u00B1 2.56 V',
                   '0-12.288 V', '0-10.24 V', '0-6.144 V', '0-5.12 V'],
+    'defaultRange': 4,
     'RST_PIN': [22, 18]
 }
 
