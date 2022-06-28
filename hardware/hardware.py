@@ -87,7 +87,7 @@ class Demodulator:
     def __repr__(self):
         return f'Demodulator-{self.channel} based on AD630. The amp_pha_pin is {self.amp_pha_pin}.'
 
-    def __init__(self, adc: ADS8685, settings, channel=None):
+    def __init__(self, adc: ADC, settings, channel=None):
         """Initialize the Demodulator"""
         if channel is None:
             self.channel = 1
