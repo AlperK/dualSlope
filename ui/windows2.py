@@ -11,6 +11,9 @@ with open('default adc settings.json', 'r') as f:
 
 
 class HardwareTab(Sg.Tab):
+    """
+    The tab that includes all the Frames related to the hardware
+    """
     def __init__(self):
         self.layout = [[DDSFrame()],
                        [DemodulatorFrame()]]
@@ -19,7 +22,11 @@ class HardwareTab(Sg.Tab):
 
 
 class DDSFrame(Sg.Frame):
+    """
+    The Frame that includes all the Elements related to the DDS
+    """
     def __init__(self):
+        # RF and IF frequency settings
         _CHA_FRE_ROW = [
             [Sg.Text(text='RF (Mhz)', size=(15, None)),
              Sg.Input(default_text=DEF_DDS_SETTINGS['RF'],
@@ -37,6 +44,8 @@ class DDSFrame(Sg.Frame):
         _CHA_FRE_FRA = Sg.Frame(title='DDS Frequency Settings',
                                 layout=_CHA_FRE_ROW,
                                 size=(610, 50))
+
+        # Miscellaneous DDS settings
         _DDS_SET_ROW = [
             [Sg.Button(button_text='Reset',
                        size=(10, 5),
@@ -52,6 +61,7 @@ class DDSFrame(Sg.Frame):
                                 layout=_DDS_SET_ROW,
                                 size=(300, 50))
 
+        # Channel amplitude settings
         _CHA_AMP_COL = [
             ([
                 Sg.Text(text=f"Channel {channel}",
@@ -66,6 +76,7 @@ class DDSFrame(Sg.Frame):
                                 layout=_CHA_AMP_COL,
                                 size=(300, 135))
 
+        # Channel phase settings
         _CHA_PHA_COL = [
             [
                 Sg.Text(text=f"Channel {channel} (°)",
@@ -80,6 +91,7 @@ class DDSFrame(Sg.Frame):
                                 layout=_CHA_PHA_COL,
                                 size=(300, 135))
 
+        # Channel divider settings
         _CHA_DIV_COL = [
             [Sg.Text(f'Channel {channel}'),
              Sg.Combo(values=[1, 2, 4, 8],
@@ -92,6 +104,7 @@ class DDSFrame(Sg.Frame):
                                 layout=_CHA_DIV_COL,
                                 size=(146, 135))
 
+        # Channel enable/disable settings
         _CHA_EN_COL = [
             [
                 Sg.Checkbox(text='Enable',
@@ -117,9 +130,13 @@ class DDSFrame(Sg.Frame):
 
 
 class DemodulatorFrame(Sg.Frame):
+    """
+    The Frame that includes all the Elements related to the Demodulators
+    """
     def __init__(self):
         self.title = 'Demodulator Controls'
 
+        # Demodulator Settings
         _DEM_COL_1 = Sg.Column(layout=[
             [
                 Sg.Text('ADC-1 Range'),
