@@ -80,6 +80,18 @@ class DDSFrame(Sg.Frame):
                                 layout=_CHA_PHA_COL,
                                 size=(300, 135))
 
+        _CHA_DIV_COL = [
+            [Sg.Text(f'Channel {channel}'),
+             Sg.Combo(values=[1, 2, 4, 8],
+                      default_value=DEF_DDS_SETTINGS['channelDividers'][channel],
+                      key=f'__DDS_CHA_DIV__{channel}',
+                      enable_events=True),]
+            for channel in range(4)
+        ]
+        _CHA_DIV_FRA = Sg.Frame(title='Channel Dividers',
+                                layout=_CHA_DIV_COL,
+                                size=(146, 135))
+
         _CHA_EN_COL = [
             [
                 Sg.Checkbox(text='Enable',
@@ -91,13 +103,13 @@ class DDSFrame(Sg.Frame):
         ]
         _CHA_EN_FRA = Sg.Frame(title='Channel Enable',
                                layout=_CHA_EN_COL,
-                               size=(300, 135))
+                               size=(146, 135))
 
         self.layout = [
             [
                 Sg.Column(layout=[
                     [_CHA_FRE_FRA, _DDS_SET_FRA],
-                    [_CHA_AMP_FRA, _CHA_PHA_FRA, _CHA_EN_FRA]])
+                    [_CHA_AMP_FRA, _CHA_PHA_FRA, _CHA_DIV_FRA, _CHA_EN_FRA]])
             ]
         ]
 
