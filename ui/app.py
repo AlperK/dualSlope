@@ -92,7 +92,7 @@ class MainApplication(Sg.Window):
         self.demodulator1.adc.initialize(settings=DEF_ADC_SETTINGS)
         self.demodulator2.adc.initialize(settings=DEF_ADC_SETTINGS)
 
-        # Instantiating and initizalizing the Lasers
+        # Instantiating and initializing the Lasers
         self.laser1 = hw.Laser(wavelength=685, pin=13)
         self.laser2 = hw.Laser(wavelength=685, pin=10)
         self.laser3 = hw.Laser(wavelength=830, pin=15)

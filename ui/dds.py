@@ -109,4 +109,6 @@ dds_layout = [
     ]
 ]
 dds_frame = Sg.Frame(title='DDS Settings',
-                     layout=dds_layout)
+                     layout=dds_layout,
+                     size=(1000, 250),
+                     )

@@ -37,7 +37,9 @@ _DEM_COL_1 = Sg.Column(layout=[
 _DEM_FRA_1 = Sg.Frame(title='Demodulator-1 Settings',
                       layout=[
                           [_DEM_COL_1]
-                      ])
+                      ],
+                      size=(300, 150),
+                      )
 _DEM_COL_2 = Sg.Column(layout=[
     [
         Sg.Text('ADC-2 Range'),
@@ -69,9 +71,14 @@ _DEM_COL_2 = Sg.Column(layout=[
 _DEM_FRA_2 = Sg.Frame(title='Demodulator-2 Settings',
                       layout=[
                           [_DEM_COL_2]
-                      ])
+                      ],
+                      size=(300, 150),
+                      )
 dem_layout = [
-    [_DEM_FRA_1, Sg.VerticalSeparator(), _DEM_FRA_2]
+    [_DEM_FRA_1,
+     # Sg.VerticalSeparator(),
+     _DEM_FRA_2]
 ]
 dem_frame = Sg.Frame(title='Demodulator Controls',
-                     layout=dem_layout)
+                     layout=dem_layout,
+                     size=(620, 150))
