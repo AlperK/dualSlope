@@ -1,7 +1,10 @@
 import PySimpleGUI as Sg
 import json
 import hardware.hardware as hw
-import ui.windows2 as windows
+from ui.dds import dds_frame
+from ui.demodulator import dem_frame
+from ui.laser import laser_frame
+from ui.measurement import measurement_tab
 
 with open('app settings.json', 'r') as f:
     APP_SETTINGS = json.load(f)
@@ -12,14 +15,17 @@ with open('default adc settings.json', 'r') as f:
 with open('default dem settings.json', 'r') as f:
     DEF_DEM_SETTINGS = json.load(f)
 
+Sg.theme('DarkTeal6')
+
 
 class MainApplication(Sg.Window):
     """
     The main application. All the hardware is an attribute of this
     """
+
     def __init__(self):
         # General window settings
-        Sg.theme(APP_SETTINGS['theme'])
+        Sg.change_look_and_feel(APP_SETTINGS['theme'])
         self.theme = APP_SETTINGS['theme']
         self.title = APP_SETTINGS['title']
         self.win_size = (APP_SETTINGS['width'], APP_SETTINGS['height'])
@@ -28,21 +34,31 @@ class MainApplication(Sg.Window):
         self.log = Sg.Frame(title='Event Log',
                             layout=[[Sg.Multiline(disabled=True,
                                                   key='__LOG__',
-                                                  size=(610, 20),
                                                   autoscroll=True,
+                                                  size=(1600, 100),
+                                                  # expand_x=True,
+                                                  # expand_y=True,
                                                   )]]
                             )
 
-        # Instantiating the Hardware TabGroup
-        self.hwTabGroup = Sg.TabGroup(tab_location='left',
-                                      layout=[
-                                          [windows.HardwareTab()],
-                                      ],
-                                      expand_x=True)
+        self.hardware_tab = Sg.Tab(title='Hardware',
+                                   layout=[
+                                       [dds_frame],
+                                       [dem_frame, laser_frame]
+                                   ])
+        self.measurement_tab = measurement_tab
+
+        # Instantiating the TabGroup
+        self.tabGroup = Sg.TabGroup(tab_location='topleft',
+                                    layout=[
+                                        [self.hardware_tab],
+                                        [self.measurement_tab],
+                                    ],
+                                    expand_x=True)
 
         self.layout = [
-            [self.hwTabGroup],
-            [Sg.Text('', size=(8, None)), self.log]
+            [self.tabGroup],
+            [self.log],
         ]
         super(MainApplication, self).__init__(title=self.title,
                                               size=self.win_size,
@@ -75,3 +91,9 @@ class MainApplication(Sg.Window):
 
         self.demodulator1.adc.initialize(settings=DEF_ADC_SETTINGS)
         self.demodulator2.adc.initialize(settings=DEF_ADC_SETTINGS)
+
+        # Instantiating and initizalizing the Lasers
+        self.laser1 = hw.Laser(wavelength=685, pin=13)
+        self.laser2 = hw.Laser(wavelength=685, pin=10)
+        self.laser3 = hw.Laser(wavelength=830, pin=15)
+        self.laser4 = hw.Laser(wavelength=830, pin=16)

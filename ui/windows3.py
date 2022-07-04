@@ -3,6 +3,10 @@ import json
 import numpy as np
 from pathlib import Path
 
+from ui.dds import dds_frame
+from ui.demodulator import dem_frame
+from ui.measurement import prepare_measurement_folder
+
 with open('app settings.json', 'r') as f:
     APP_SETTINGS = json.load(f)
 with open('default dds settings.json', 'r') as f:
@@ -21,6 +25,17 @@ class HardwareTab(Sg.Tab):
                        [DemodulatorFrame()]]
         super(HardwareTab, self).__init__(title=f"Hardware \nTab",
                                           layout=self.layout, )
+
+
+dem_title = 'Demodulator Controls'
+
+hardware_layout = [
+    [dds_frame],
+    [dem_frame],
+]
+
+hardware_tab = Sg.Tab(title='Hardware',
+                      layout=hardware_layout)
 
 
 class DDSFrame(Sg.Frame):
@@ -213,14 +228,6 @@ class DemodulatorFrame(Sg.Frame):
                                                layout=self.layout)
 
 
-def prepare_measurement_folder():
-    # Prepare the folder the measurements will be saved in
-    home = Path('').home()
-    base_folder = Path.joinpath(home, 'Documents', 'Dual Slope Data')
-    base_folder.mkdir(parents=True, exist_ok=True)
-    return base_folder
-
-
 class MeasurementTab(Sg.Tab):
     def __init__(self):
         self.base_folder = prepare_measurement_folder()
@@ -258,7 +265,7 @@ class MeasurementTab(Sg.Tab):
                       size=(5, 1),
                       key='__LASER_ON_TIME__')],
         ]
-        
+
         super(MeasurementTab, self).__init__(title='Measurement \nTab',
                                              layout=_FILE_LOC_ROW,
                                              )

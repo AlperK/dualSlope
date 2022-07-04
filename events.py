@@ -1,6 +1,7 @@
 import PySimpleGUI as Sg
 import RPi.GPIO as GPIO
 import json
+from pathlib import Path
 
 
 with open('default dds settings.json') as f:
@@ -9,38 +10,13 @@ with open('default adc settings.json') as f:
     DEF_ADC_SETTINGS = json.load(f)
 
 
-def event_handler(app, event, values):
-    if event == Sg.WIN_CLOSED:
-        GPIO.cleanup()
-        return -1
-    else:
-        event_group = event.split('__')[1].split('_')[0]
-        print(values)
-        try:
-            value = values[event]
-        except KeyError:
-            value = None
-        print(f'Event Group: {event_group}')
-        print(f'Event : {event}')
-        print(f'Event Value: {value}')
-
-        if event_group == 'DDS':
-            dds_events(app, event, values)
-
-        elif event_group == 'ADC':
-            adc_events(app, event, values)
-
-        elif event_group == 'DEM':
-            dem_events(app, event, values)
-
-
 def dds_events(app, event, values):
     """
     Handles the events related to the DDS
     :param app: The MainWindow
     :param event: The event
     :param values: The values dictionary
-    :return: 
+    :return:
     """
     if event == '__DDS_P_DWN__':
         if values[event]:
@@ -109,7 +85,7 @@ def adc_events(app, event, values):
     :param app: The MainWindow
     :param event: The event
     :param values: The values dictionary
-    :return: 
+    :return:
     """
     if event in [f'__ADC_RANGE__{channel}' for channel in range(1, 3)]:
         channel = int(event[-1])
@@ -135,7 +111,7 @@ def dem_events(app, event, values):
     :param app: The MainWindow
     :param event: The event
     :param values: The values dictionary
-    :return: 
+    :return:
     """
     if event in [f'__DEM_SET_AMP__{channel}' for channel in range(1, 3)]:
         channel = int(event[-1])
@@ -159,3 +135,73 @@ def dem_events(app, event, values):
             result = getattr(app, f'demodulator{channel}').measure_phase(raw=values[f'__DEM_RAW__{channel}'])
             app['__LOG__'].update(f'Demodulator-{channel} measurement result: {result}.\n', append=True)
             app['__LOG__'].update(f"Raw: {values[f'__DEM_RAW__{channel}']}.\n", append=True)
+
+
+def meas_events(app, event, values):
+    """
+    Handles the events related to the Measurement
+    :param app: The MainWindow
+    :param event: The event
+    :param values: The values dictionary
+    :return:
+    """
+    # Creates and updates the save file location
+    if event in ['__MEAS_LOC__', '__MEAS_GRP__', '__MEAS_NUM__']:
+        app.save_location = Path.joinpath(Path(values['__MEAS_LOC__']),
+                                          Path(values['__MEAS_GRP__']),
+                                          Path(values['__MEAS_NUM__']))
+        print(app.save_location)
+
+    elif event == '__MEAS_PRT__':
+        app['__LOG__'].update(f"Save file location: {app.save_location}\n",
+                              append=True)
+
+
+def laser_events(app, event, values):
+    """
+    Handles the events related to the Lasers
+    :param app: The MainWindow
+    :param event: The event
+    :param values: The values dictionary
+    :return:
+    """
+    # Turn on/off the selected Laser
+    if event in [f'__LAS__{i}' for i in range(1, 5)]:
+        channel = event[-1]
+        if values[event]:
+            getattr(app, f'laser{channel}').turn_on()
+            app['__LOG__'].update(f"Laser-{channel} is turned on.\n", append=True)
+        else:
+            getattr(app, f'laser{channel}').turn_off()
+            app['__LOG__'].update(f"Laser-{channel} is turned off.\n", append=True)
+
+
+def event_handler(app, event, values):
+    if event == Sg.WIN_CLOSED:
+        GPIO.cleanup()
+        return -1
+    else:
+        event_group = event.split('__')[1].split('_')[0]
+        print(values)
+        try:
+            value = values[event]
+        except KeyError:
+            value = None
+        print(f'Event Group: {event_group}')
+        print(f'Event : {event}')
+        print(f'Event Value: {value}')
+
+        if event_group == 'DDS':
+            dds_events(app, event, values)
+
+        elif event_group == 'ADC':
+            adc_events(app, event, values)
+
+        elif event_group == 'DEM':
+            dem_events(app, event, values)
+
+        elif event_group == 'MEAS':
+            meas_events(app, event, values)
+
+        elif event_group == 'LAS':
+            laser_events(app, event, values)
