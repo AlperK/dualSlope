@@ -45,7 +45,8 @@ _FILE_LOC_ROW = [
      Sg.Input(default_text=100,
               size=(5, 1),
               key='__LASER_ON_TIME__')],
-    [Sg.Button('ASD', size=(10, 1), key='__MEAS_PRT__', enable_events=True)],
+    [Sg.Button('Create', size=(10, 1), key='__MEAS_CRT__', enable_events=True),],
+    [Sg.Button('Start', size=(10, 1), key='__MEAS_START__', enable_events=True),],
 ]
 
 measurement_tab = Sg.Tab(title='Measurement',

@@ -2,6 +2,7 @@ import PySimpleGUI as Sg
 import RPi.GPIO as GPIO
 import json
 from pathlib import Path
+import Measurement
 
 
 with open('default dds settings.json') as f:
@@ -146,15 +147,26 @@ def meas_events(app, event, values):
     :return:
     """
     # Creates and updates the save file location
-    if event in ['__MEAS_LOC__', '__MEAS_GRP__', '__MEAS_NUM__']:
-        app.save_location = Path.joinpath(Path(values['__MEAS_LOC__']),
-                                          Path(values['__MEAS_GRP__']),
-                                          Path(values['__MEAS_NUM__']))
-        print(app.save_location)
 
-    elif event == '__MEAS_PRT__':
+    if event in ['__MEAS_LOC__', '__MEAS_GRP__', '__MEAS_NUM__']:
+        app.measurement.save_location = Path.joinpath(Path(values['__MEAS_LOC__']),
+                                                      Path(values['__MEAS_GRP__']),
+                                                      Path(values['__MEAS_NUM__']))
+        # measurement.save_loc = app.save_location
+        print(app.measurement.save_location)
+
+    elif event == '__MEAS_CRT__':
         app['__LOG__'].update(f"Save file location: {app.save_location}\n",
                               append=True)
+
+        app.measurement.create_measurement_files()
+
+    elif event == '__MEAS_START__':
+        app.perform_long_operation(lambda: app.measurement.dummy_long_operation(10),
+                                   '__MEAS_LONG_DONE__')
+
+    elif event == '__MEAS_LONG_DONE__':
+        app['__LOG__'].update('Long operation done.\n', append=True)
 
 
 def laser_events(app, event, values):

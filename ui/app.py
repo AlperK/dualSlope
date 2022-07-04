@@ -1,6 +1,7 @@
 import PySimpleGUI as Sg
 import json
 import hardware.hardware as hw
+import Measurement
 from ui.dds import dds_frame
 from ui.demodulator import dem_frame
 from ui.laser import laser_frame
@@ -97,3 +98,10 @@ class MainApplication(Sg.Window):
         self.laser2 = hw.Laser(wavelength=685, pin=10)
         self.laser3 = hw.Laser(wavelength=830, pin=15)
         self.laser4 = hw.Laser(wavelength=830, pin=16)
+
+        # Instantiating the measurement
+        self.save_location = None
+        self.laser_on_time = None
+        self.measurement = Measurement.Measurement(laser_on_time=self.laser_on_time,
+                                                   save_location=self.save_location)
+
