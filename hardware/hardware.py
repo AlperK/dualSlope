@@ -107,7 +107,7 @@ class Demodulator:
 
         self.adc = adc
         self.laser_on_time = settings['laserOnTime']
-        self.integration_number = 1
+        self.integration_number = 128
 
         self.amp_pha_pin = settings[str(self)]['PHA_AMP_PIN']
         GPIO.setup(self.amp_pha_pin, GPIO.OUT)
@@ -151,7 +151,8 @@ class Demodulator:
             temp[i] = self.adc.convert()
         voltage = temp.mean() * 1000
         if not raw:
-            amplitude = (voltage - self.amplitude_coefficients['intercept']) / self.amplitude_coefficients['slope']
+            # amplitude = (voltage - self.amplitude_coefficients['intercept']) / self.amplitude_coefficients['slope']
+            amplitude = voltage * self.amplitude_coefficients['slope'] + self.amplitude_coefficients['intercept']
             return amplitude
         else:
             return voltage
@@ -169,7 +170,7 @@ class Demodulator:
         temp = np.zeros(self.integration_number)
         for i in range(self.integration_number):
             temp[i] = self.adc.convert()
-        voltage = temp.mean()
+        voltage = temp.mean() * 1000
 
         if not raw:
             if amplitude is None:
@@ -189,9 +190,9 @@ class Demodulator:
         :return: Phase of the IF in degrees
         """
         x = (voltage - np.log(amplitude) * self.phase_coefficients['offset']) / \
-            (self.phase_coefficients['A'] * self.phase_coefficients['freq'])
+            (self.phase_coefficients['A'] * amplitude)
         y = np.arcsin(x)
-        phase = (y / (2 * np.pi * self.phase_coefficients['phi'])) - 90
+        phase = (y-self.phase_coefficients['phi']) / (2*np.pi*self.phase_coefficients['freq']) - 90
 
         return -phase
 
