@@ -138,11 +138,9 @@ def dem_events(app, event, values):
         if values[f'__DEM_SET_AMP__{channel}']:
             result = getattr(app, f'demodulator{channel}').measure_amplitude(raw=values[f'__DEM_RAW__{channel}'])
             app['__LOG__'].update(f'Demodulator-{channel} measurement result: {result}.\n', append=True)
-            app['__LOG__'].update(f"Raw: {values[f'__DEM_RAW__{channel}']}.\n", append=True)
         elif values[f'__DEM_SET_PHA__{channel}']:
             result = getattr(app, f'demodulator{channel}').measure_phase(raw=values[f'__DEM_RAW__{channel}'])
             app['__LOG__'].update(f'Demodulator-{channel} measurement result: {result}.\n', append=True)
-            app['__LOG__'].update(f"Raw: {values[f'__DEM_RAW__{channel}']}.\n", append=True)
 
 
 def meas_events(app, event, values):
