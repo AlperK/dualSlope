@@ -85,7 +85,7 @@ _CHA_DIV_COL = [
 ]
 _CHA_DIV_FRA = Sg.Frame(title='Channel Dividers',
                         layout=_CHA_DIV_COL,
-                        size=(146, 135))
+                        size=(145, 135))
 
 
 # Channel enable/disable settings
@@ -100,7 +100,7 @@ _CHA_EN_COL = [
 ]
 _CHA_EN_FRA = Sg.Frame(title='Channel Enable',
                        layout=_CHA_EN_COL,
-                       size=(146, 135))
+                       size=(145, 135))
 dds_layout = [
     [
         Sg.Column(layout=[
@@ -110,5 +110,5 @@ dds_layout = [
 ]
 dds_frame = Sg.Frame(title='DDS Settings',
                      layout=dds_layout,
-                     size=(1000, 250),
+                     size=(930, 250),
                      )

@@ -17,5 +17,5 @@ laser_frame = Sg.Frame(
     layout=[
         [_LAS_COL],
     ],
-    size=(370, 150),
+    size=(300, 150),
 )

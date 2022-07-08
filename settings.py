@@ -2,7 +2,7 @@ import json
 
 app_settings = {
     'theme': 'DarkTeal6',
-    'width': 1200,
+    'width': 960,
     'height': 800,
     'title': 'Dual Slope'
 }

@@ -36,7 +36,7 @@ class MainApplication(Sg.Window):
                             layout=[[Sg.Multiline(disabled=True,
                                                   key='__LOG__',
                                                   autoscroll=True,
-                                                  size=(1600, 100),
+                                                  size=(1200, 100),
                                                   # expand_x=True,
                                                   # expand_y=True,
                                                   )]]
