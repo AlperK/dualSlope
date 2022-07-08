@@ -49,7 +49,8 @@ def dds_events(app, event, values):
 
     elif event in [f'__DDS_CHA_PHA__{channel}' for channel in range(4)]:
         channel = int(event[-1])
-        value = values[f'__DDS_CHA_AMP__{channel}']
+        value = values[event]
+        # print(value)
         app.dds.set_output(channels=channel, value=float(value), var='phase', io_update=True)
 
         app['__LOG__'].update(f'Channel {channel} phase set to {values[event]}.\n', append=True)
@@ -103,7 +104,13 @@ def adc_events(app, event, values):
         channel = int(event[-1])
         getattr(getattr(app, f'demodulator{channel}'), 'adc').reset()
 
+        app[f'__ADC_RANGE__{channel}'].update(DEF_ADC_SETTINGS['rangeList'][0])
         app['__LOG__'].update(f'ADC-{channel} is reset.\n', append=True)
+
+    elif event in [f'__ADC_GET_RANGE__{channel}' for channel in range(1, 3)]:
+        channel = int(event[-1])
+        app['__LOG__'].update(f"ADC-{channel} range is {getattr(app, f'demodulator{channel}').adc.get_range()}.\n",
+                              append=True)
 
 
 def dem_events(app, event, values):

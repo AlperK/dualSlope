@@ -28,6 +28,9 @@ _DEM_COL_1 = Sg.Column(layout=[
                  group_id='PHA_AMP_1',
                  key='__DEM_SET_PHA__1',
                  enable_events=True),
+        Sg.Button('Get Range',
+                  key='__ADC_GET_RANGE__1',
+                  enable_events=True),
     ],
     [
         Sg.Button('Measure', key='__DEM_MEA__1', enable_events=True),
@@ -62,6 +65,9 @@ _DEM_COL_2 = Sg.Column(layout=[
                  group_id='PHA_AMP_2',
                  key='__DEM_SET_PHA__2',
                  enable_events=True),
+        Sg.Button('Get Range',
+                  key='__ADC_GET_RANGE__2',
+                  enable_events=True),
     ],
     [
         Sg.Button('Measure', key='__DEM_MEA__2', enable_events=True),
@@ -81,4 +87,5 @@ dem_layout = [
 ]
 dem_frame = Sg.Frame(title='Demodulator Controls',
                      layout=dem_layout,
-                     size=(620, 150))
+                     size=(620, 150)
+                     )
