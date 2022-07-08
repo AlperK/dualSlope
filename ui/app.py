@@ -6,6 +6,7 @@ from ui.dds import dds_frame
 from ui.demodulator import dem_frame
 from ui.laser import laser_frame
 from ui.measurement import measurement_tab
+import ui.drawings
 
 with open('app settings.json', 'r') as f:
     APP_SETTINGS = json.load(f)
@@ -105,3 +106,17 @@ class MainApplication(Sg.Window):
         self.measurement = Measurement.Measurement(laser_on_time=self.laser_on_time,
                                                    save_location=self.save_location)
 
+        # Drawing the Laser and Demodulator indicators
+        graph = self.Element('__GRAPH__')
+        rect1 = graph.draw_rectangle(top_left=(25, 75),
+                                     bottom_right=(75, 25),
+                                     line_color="red",)
+        rect2 = graph.draw_rectangle(top_left=(325, 75),
+                                     bottom_right=(375, 25),
+                                     line_color="red",)
+        circ1 = graph.draw_circle(center_location=(150, 50),
+                                  radius=25,
+                                  line_color='white')
+        circ2 = graph.draw_circle(center_location=(250, 50),
+                                  radius=25,
+                                  line_color='white')
