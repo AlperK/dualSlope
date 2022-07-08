@@ -63,9 +63,9 @@ class ADS8685:
 
     def reset(self):
         GPIO.output(self.reset_pin, False)
-        time.sleep(10e-6)
+        time.sleep(10e-3)
         GPIO.output(self.reset_pin, True)
-        time.sleep(20e-6)
+        time.sleep(20e-3)
 
         self.pos_full_scale = self.ranges[0b000][0] * 4.096
         self.neg_full_scale = self.ranges[0b000][1] * 4.096
