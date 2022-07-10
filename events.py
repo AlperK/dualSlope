@@ -167,11 +167,30 @@ def meas_events(app, event, values):
         app.measurement.create_measurement_files()
 
     elif event == '__MEAS_START__':
-        app.perform_long_operation(lambda: app.measurement.dummy_long_operation(10),
-                                   '__MEAS_LONG_DONE__')
+        app.measurement.start()
+        app.measurement.start_measurement_on_a_thread()
 
     elif event == '__MEAS_LONG_DONE__':
         app['__LOG__'].update('Long operation done.\n', append=True)
+
+    elif event == '__MEAS_STOP__':
+        app.measurement.stop()
+        app.measurement.started = False
+
+        for rectangle, circle in zip(app.window_rectangles, app.window_circles):
+            app.graph.TKCanvas.itemconfig(rectangle, fill='grey')
+            app.graph.TKCanvas.itemconfig(circle, fill='grey')
+        app['__LOG__'].update('Long operation stopped.\n', append=True)
+
+    elif event == '__MEAS_PROGRESS__':
+        laser = int(values[event][0]) % 2
+        demodulator = int(values[event][1])
+        for rectangle, circle in zip(app.window_rectangles, app.window_circles):
+            app.graph.TKCanvas.itemconfig(rectangle, fill='grey')
+            app.graph.TKCanvas.itemconfig(circle, fill='grey')
+
+        app.graph.TKCanvas.itemconfig(app.window_rectangles[laser], fill='red')
+        app.graph.TKCanvas.itemconfig(app.window_circles[demodulator], fill='white')
 
 
 def laser_events(app, event, values):
@@ -191,6 +210,10 @@ def laser_events(app, event, values):
         else:
             getattr(app, f'laser{channel}').turn_off()
             app['__LOG__'].update(f"Laser-{channel} is turned off.\n", append=True)
+
+    elif event == '__LASER_ON_TIME__':
+        app.measurement.laser_on_time = float(values[event]) / 1000
+        app['__LOG__'].update(f'laser on time {float(values[event])}\n', append=True)
 
 
 def event_handler(app, event, values):
@@ -220,5 +243,5 @@ def event_handler(app, event, values):
         elif event_group == 'MEAS':
             meas_events(app, event, values)
 
-        elif event_group == 'LAS':
+        elif event_group == 'LAS' or 'LASER':
             laser_events(app, event, values)
