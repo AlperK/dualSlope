@@ -100,23 +100,15 @@ class MainApplication(Sg.Window):
         self.laser3 = hw.Laser(wavelength=830, pin=15)
         self.laser4 = hw.Laser(wavelength=830, pin=16)
 
+        # Drawing the Laser and Demodulator indicators
+        self.graph = self.Element('__GRAPH__')
+        self.graph, self.window_rectangles, self.window_circles, self.window_texts = ui.drawings.draw_the_things(self.graph)
+
         # Instantiating the measurement
         self.save_location = None
-        self.laser_on_time = None
-        self.measurement = Measurement.Measurement(laser_on_time=self.laser_on_time,
-                                                   save_location=self.save_location)
+        self.laser_on_time = float(self['__LASER_ON_TIME__'].get()) / 1000
 
-        # Drawing the Laser and Demodulator indicators
-        graph = self.Element('__GRAPH__')
-        rect1 = graph.draw_rectangle(top_left=(25, 75),
-                                     bottom_right=(75, 25),
-                                     line_color="red",)
-        rect2 = graph.draw_rectangle(top_left=(325, 75),
-                                     bottom_right=(375, 25),
-                                     line_color="red",)
-        circ1 = graph.draw_circle(center_location=(150, 50),
-                                  radius=25,
-                                  line_color='white')
-        circ2 = graph.draw_circle(center_location=(250, 50),
-                                  radius=25,
-                                  line_color='white')
+        self.measurement = Measurement.Measurement(laser_on_time=self.laser_on_time,
+                                                   save_location=self.save_location,
+                                                   app=self)
+

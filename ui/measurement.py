@@ -1,6 +1,6 @@
 import PySimpleGUI as Sg
 from pathlib import Path
-from ui.drawings import graph
+from ui.drawings import measurement_graph
 
 
 def prepare_measurement_folder():
@@ -45,17 +45,20 @@ _FILE_LOC_ROW = [
              size=(30, 1)),
      Sg.Input(default_text=100,
               size=(5, 1),
-              key='__LASER_ON_TIME__')],
+              key='__LASER_ON_TIME__', enable_events=True),],
     [Sg.Button('Create', size=(10, 1),
                key='__MEAS_CRT__', enable_events=True),],
     [Sg.Button('Start', size=(10, 1),
-               key='__MEAS_START__', enable_events=True),],
+               key='__MEAS_START__', enable_events=True),
+     Sg.Button('Stop', size=(10, 1),
+               key='__MEAS_STOP__', enable_events=True),
+     ],
 ]
 
 _FILE_LOC_FRA = Sg.Column(layout=_FILE_LOC_ROW)
 
 _GRAPH_ROW = [
-    [graph]
+    [measurement_graph]
 ]
 _GRAPH_COL = Sg.Column(layout=_GRAPH_ROW)
 
