@@ -244,7 +244,8 @@ def meas_events(app, event, values):
 
         demodulator_count = int(values[event][1])
         demodulator = getattr(app, f"demodulator{values[event][1]+1}")
-        for window_rectangle, window_circle, window_text in zip(app.window_rectangles, app.window_circles, app.window_texts):
+        for window_rectangle, window_circle, window_text in \
+                zip(app.window_rectangles, app.window_circles, app.window_texts):
             app.graph.TKCanvas.itemconfig(window_rectangle, fill='grey')
             app.graph.TKCanvas.itemconfig(window_circle, fill='grey')
 
