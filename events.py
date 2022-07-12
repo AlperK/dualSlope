@@ -41,9 +41,11 @@ def dds_events(app, event, values):
         app['__LOG__'].update(f'DDS PLL set to {values[event]}.\n', append=True)
 
     elif event in [f'__DDS_CHA_AMP__{channel}' for channel in range(4)]:
+        #   Check if the input can be a float, then between 0 and 1, then apply.
+
+        channel = int(event[-1])
         for i in range(4):
             try:
-                channel = int(event[-1])
                 value = float(values[f'__DDS_CHA_AMP__{i}'])
 
                 if not value <= 1.0:
@@ -59,18 +61,25 @@ def dds_events(app, event, values):
                 app['__LOG__'].update(f'Invalid amplitude for Channel {i}.\n', append=True)
                 app[f'__DDS_CHA_AMP__{i}'].update(background_color='orange')
 
-        # channel = int(event[-1])
-        # value = values[f'__DDS_CHA_AMP__{channel}']
-        #
-        # app['__LOG__'].update(f'Channel {channel} amplitude set to {values[event]}.\n', append=True)
-
     elif event in [f'__DDS_CHA_PHA__{channel}' for channel in range(4)]:
-        channel = int(event[-1])
-        value = values[event]
-        # print(value)
-        app.dds.set_output(channels=channel, value=float(value), var='phase', io_update=True)
+        #   Check if the input can be a float, then between 0 and 360, then apply.
 
-        app['__LOG__'].update(f'Channel {channel} phase set to {values[event]}.\n', append=True)
+        channel = int(event[-1])
+        for i in range(4):
+            try:
+                value = float(values[f'__DDS_CHA_PHA__{i}'])
+
+                if not 0 <= value <= 360:
+                    app['__LOG__'].update(f'Invalid phase for Channel {i}.\n', append=True)
+                    app[f'__DDS_CHA_PHA__{i}'].update(background_color='orange')
+                else:
+                    app.dds.set_output(channels=channel, value=value, var='phase', io_update=True)
+                    app[f'__DDS_CHA_PHA__{i}'].update(background_color=Sg.theme_input_background_color())
+                    if i == channel:
+                        app['__LOG__'].update(f'Channel {i} phase set.\n', append=True)
+            except ValueError:
+                app['__LOG__'].update(f'Invalid phase for Channel {i}.\n', append=True)
+                app[f'__DDS_CHA_PHA__{i}'].update(background_color='orange')
 
     elif event in [f'__DDS_CHA_EN__{channel}' for channel in range(4)]:
         channel = int(event[-1])
