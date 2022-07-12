@@ -2,7 +2,7 @@ import PySimpleGUI as Sg
 import RPi.GPIO as GPIO
 import json
 from pathlib import Path
-import Measurement
+import numpy as np
 
 
 with open('default dds settings.json') as f:
@@ -158,6 +158,9 @@ def meas_events(app, event, values):
                                                       Path(values['__MEAS_GRP__']),
                                                       Path(values['__MEAS_NUM__']))
         # measurement.save_loc = app.save_location
+        app.measurement.amplitude_save_location = Path.joinpath(app.measurement.save_location, 'amplitude.csv')
+        app.measurement.phase_save_location = Path.joinpath(app.measurement.save_location, 'phase.csv')
+
         print(app.measurement.save_location)
 
     elif event == '__MEAS_CRT__':
@@ -167,6 +170,8 @@ def meas_events(app, event, values):
         app.measurement.create_measurement_files()
 
     elif event == '__MEAS_START__':
+        _amplitudes = np.array([])
+        _phases = np.array([])
         app.measurement.start()
         app.measurement.start_measurement_on_a_thread()
 
@@ -183,14 +188,32 @@ def meas_events(app, event, values):
         app['__LOG__'].update('Long operation stopped.\n', append=True)
 
     elif event == '__MEAS_PROGRESS__':
-        laser = int(values[event][0]) % 2
-        demodulator = int(values[event][1])
-        for rectangle, circle in zip(app.window_rectangles, app.window_circles):
-            app.graph.TKCanvas.itemconfig(rectangle, fill='grey')
-            app.graph.TKCanvas.itemconfig(circle, fill='grey')
+        laser_count = int(values[event][0]) % 2
+        laser = getattr(app, f"laser{values[event][0]+1}")
 
-        app.graph.TKCanvas.itemconfig(app.window_rectangles[laser], fill='red')
-        app.graph.TKCanvas.itemconfig(app.window_circles[demodulator], fill='white')
+        demodulator_count = int(values[event][1])
+        demodulator = getattr(app, f"demodulator{values[event][1]+1}")
+        for window_rectangle, window_circle, window_text in zip(app.window_rectangles, app.window_circles, app.window_texts):
+            app.graph.TKCanvas.itemconfig(window_rectangle, fill='grey')
+            app.graph.TKCanvas.itemconfig(window_circle, fill='grey')
+
+        app.graph.TKCanvas.itemconfig(app.window_rectangles[laser_count], fill='red')
+        app.graph.TKCanvas.itemconfig(app.window_circles[demodulator_count], fill='white')
+
+        for i in range(1, 5):
+            getattr(app, f"laser{i}").turn_off()
+
+        laser.turn_on()
+        amplitude = demodulator.measure_amplitude()
+        app.measurement.amplitudes = np.append(app.measurement.amplitudes, amplitude)
+        app.measurement.phases = np.append(app.measurement.phases, demodulator.measure_phase())
+
+        # app['__LOG__'].update(f'Amplitudes: {app.measurement.amplitudes}\n', append=True)
+        # app['__LOG__'].update(f'Phases: {app.measurement.phases}\n', append=True)
+
+        if app.measurement.amplitudes.size >= 8:
+            app.measurement.save_arrays()
+            app.measurement.reset_arrays()
 
 
 def laser_events(app, event, values):

@@ -1,6 +1,7 @@
 import time
 from pathlib import Path
 import threading
+import numpy as np
 
 
 def demodulator_count_generator():
@@ -32,18 +33,23 @@ def laser_count_generator():
 class Measurement:
     def __init__(self, laser_on_time, save_location=None, app=None):
         self.save_location = save_location
+        self.amplitude_save_location = None
+        self.phase_save_location = None
+
         self.started = False
         self.paused = False
         self.laser_on_time = laser_on_time
 
         self.laser_count_generator = laser_count_generator()
         self.laser_count = next(self.laser_count_generator)
+
         self.demodulator_count_generator = demodulator_count_generator()
         self.demodulator_count = next(self.demodulator_count_generator)
 
+        self.amplitudes = np.array([])
+        self.phases = np.array([])
+
         self.app = app
-        # self.graph = app.graph
-        # self.graph_elements = app.elements
 
     def start(self):
         self.started = True
@@ -54,6 +60,7 @@ class Measurement:
         self.paused = False
         self.laser_count_generator.send('restart')
         self.demodulator_count_generator.send('restart')
+        self.reset_arrays()
 
     def pause(self):
         self.paused = True
@@ -67,8 +74,8 @@ class Measurement:
         base = self.save_location
         base.mkdir(parents=True, exist_ok=True)
 
-        Path.joinpath(base, Path('amplitudes.csv')).touch()
-        Path.joinpath(base, Path('phases.csv')).touch()
+        Path.joinpath(base, Path('amplitude.csv')).touch()
+        Path.joinpath(base, Path('phase.csv')).touch()
 
     def take_measurement(self):
 
@@ -84,3 +91,13 @@ class Measurement:
 
     def start_measurement_on_a_thread(self):
         threading.Thread(target=self.take_measurement, daemon=True).start()
+
+    def reset_arrays(self):
+        self.amplitudes = np.array([])
+        self.phases = np.array([])
+
+    def save_arrays(self):
+        with open(self.amplitude_save_location, 'a+') as f:
+            np.savetxt(f, X=[self.amplitudes], delimiter=',', fmt='%4.2f')
+        with open(self.phase_save_location, 'a+') as f:
+            np.savetxt(f, X=[self.phases], delimiter=',', fmt='%3.2f')
