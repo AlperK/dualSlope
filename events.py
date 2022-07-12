@@ -72,10 +72,34 @@ def dds_events(app, event, values):
         app['__LOG__'].update(f'Channel {channel} divider set.\n', append=True)
 
     elif event in ['__DDS_RF__', '__DDS_IF__']:
+        new_rf = values['__DDS_RF__']
+        new_if = values['__DDS_IF__']
+
+        if not new_rf.isnumeric():
+            app['__LOG__'].update(f'Invalid RF.\n', append=True)
+            app['__DDS_RF__'].update(background_color='orange')
+            return
+        else:
+            app['__DDS_RF__'].update(background_color=Sg.theme_input_background_color())
+        if not float(new_rf) <= 120:
+            app['__LOG__'].update(f'Invalid RF.\n', append=True)
+            app['__DDS_RF__'].update(background_color='orange')
+            return
+        else:
+            app['__DDS_RF__'].update(background_color=Sg.theme_input_background_color())
+
+        if not new_if.isnumeric():
+            app['__LOG__'].update(f'Invalid IF.\n', append=True)
+            app['__DDS_RF__'].update(background_color='orange')
+            return
+        else:
+            app['__DDS_IF__'].update(background_color=Sg.theme_input_background_color())
+
         app.dds.set_rf_if(r_f=float(values['__DDS_RF__']),
                           i_f=float(values['__DDS_IF__']),
                           rf_channels=[0, 1],
                           lo_channels=[2, 3])
+        app['__LOG__'].update('New RF and IF frequencies are set.\n', append=True)
 
     else:
         print(f'Event \'{event}\' unrecognized.')
