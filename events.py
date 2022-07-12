@@ -78,6 +78,14 @@ def dds_events(app, event, values):
         if not new_rf.isnumeric():
             app['__LOG__'].update(f'Invalid RF.\n', append=True)
             app['__DDS_RF__'].update(background_color='orange')
+
+            if not new_if.isnumeric():
+                app['__LOG__'].update(f'Invalid IF.\n', append=True)
+                app['__DDS_IF__'].update(background_color='orange')
+                return
+            else:
+                app['__DDS_IF__'].update(background_color=Sg.theme_input_background_color())
+
             return
         else:
             app['__DDS_RF__'].update(background_color=Sg.theme_input_background_color())
@@ -87,13 +95,6 @@ def dds_events(app, event, values):
             return
         else:
             app['__DDS_RF__'].update(background_color=Sg.theme_input_background_color())
-
-        if not new_if.isnumeric():
-            app['__LOG__'].update(f'Invalid IF.\n', append=True)
-            app['__DDS_RF__'].update(background_color='orange')
-            return
-        else:
-            app['__DDS_IF__'].update(background_color=Sg.theme_input_background_color())
 
         app.dds.set_rf_if(r_f=float(values['__DDS_RF__']),
                           i_f=float(values['__DDS_IF__']),
