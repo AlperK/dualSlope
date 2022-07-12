@@ -74,6 +74,8 @@ class MainApplication(Sg.Window):
             self[f'__DDS_CHA_PHA__{channel}'].bind("<Return>", key_modifier='')
         self['__DDS_RF__'].bind("<Return>", key_modifier='')
         self['__DDS_IF__'].bind("<Return>", key_modifier='')
+        self['__MEAS_r__1'].bind("<Return>", key_modifier='')
+        self['__MEAS_r__2'].bind("<Return>", key_modifier='')
 
         # Instantiating and initializing the DDS
         self.dds = hw.DDS(bus=1, device=0, pins=DEF_DDS_SETTINGS['pins'], max_speed=1_000_000)

@@ -267,6 +267,21 @@ def meas_events(app, event, values):
             app.measurement.save_arrays()
             app.measurement.reset_arrays()
 
+    elif event in ['__MEAS_r__1', '__MEAS_r__2']:
+        for i in range(1, 3):
+            try:
+                value = float(values[f'__MEAS_r__{i}'])
+                if not value > 0:
+                    app['__LOG__'].update(f'Invalid input for r{i}.\n', append=True)
+                    app[event].update(background_color='orange')
+                else:
+                    setattr(app.measurement, f'r{i}', value)
+                    app['__LOG__'].update(f"r{i} set to {getattr(app.measurement, f'r{i}')}mm.\n", append=True)
+                    app[f'__MEAS_r__{i}'].update(background_color=Sg.theme_input_background_color())
+            except ValueError:
+                app['__LOG__'].update(f'Invalid input for r{i}.\n', append=True)
+                app[f'__MEAS_r__{i}'].update(background_color='orange')
+
 
 def laser_events(app, event, values):
     """

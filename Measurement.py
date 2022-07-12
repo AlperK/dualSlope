@@ -46,6 +46,9 @@ class Measurement:
         self.demodulator_count_generator = demodulator_count_generator()
         self.demodulator_count = next(self.demodulator_count_generator)
 
+        self.r1 = 25
+        self.r2 = 10
+
         self.amplitudes = np.array([])
         self.phases = np.array([])
 

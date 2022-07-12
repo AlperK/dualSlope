@@ -39,6 +39,35 @@ def draw_the_things(graph: Sg.Graph):
                             font=10,
                             color='black',
                             )
+    graph.draw_line(point_from=(50, 10),
+                    point_to=(350, 10),
+                    color='white',
+                    )
+    graph.draw_line(point_from=(50, 5),
+                    point_to=(50, 15),
+                    color='white',
+                    )
+    graph.draw_line(point_from=(150, 5),
+                    point_to=(150, 15),
+                    color='white',
+                    )
+    graph.draw_line(point_from=(250, 5),
+                    point_to=(250, 15),
+                    color='white',
+                    )
+    graph.draw_line(point_from=(350, 5),
+                    point_to=(350, 15),
+                    color='white',
+                    )
+    graph.draw_text(text='r1',
+                    location=(100, 25),
+                    color='white')
+    graph.draw_text(text='r2',
+                    location=(200, 25),
+                    color='white')
+    graph.draw_text(text='r1',
+                    location=(300, 25),
+                    color='white')
 
     rectangles = [rect1, rect2]
     circles = [circ1, circ2]

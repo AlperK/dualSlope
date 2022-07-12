@@ -62,9 +62,19 @@ _GRAPH_ROW = [
 ]
 _GRAPH_COL = Sg.Column(layout=_GRAPH_ROW)
 
+_DIS_ROW = [
+    [Sg.Text('r1 (mm):'), Sg.Input(default_text='25', size=(5, 1),
+                                   key='__MEAS_r__1', enable_events=False),
+     Sg.Text('r2 (mm)'), Sg.Input(default_text='10', size=(5, 1),
+                                  key='__MEAS_r__2', enable_events=False),
+     ]
+]
+_DIS_FRA = Sg.Column(layout=_DIS_ROW)
+
 measurement_tab = Sg.Tab(title='Measurement',
                          layout=[
                              [_FILE_LOC_FRA],
                              [_GRAPH_COL],
+                             [_DIS_FRA],
                          ]
                          )
