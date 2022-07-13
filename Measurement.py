@@ -61,8 +61,13 @@ class Measurement:
     def stop(self):
         self.started = False
         self.paused = False
+
         self.laser_count_generator.send('restart')
+        self.laser_count = 0
+
         self.demodulator_count_generator.send('restart')
+        self.demodulator_count = 0
+
         self.reset_arrays()
 
     def pause(self):

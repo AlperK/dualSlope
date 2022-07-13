@@ -53,7 +53,7 @@ def dds_events(app, event, values):
                     app[f'__DDS_CHA_AMP__{i}'].update(background_color='orange')
                     # break
                 else:
-                    app.dds.set_output(channels=channel, value=float(value), var='amplitude', io_update=True)
+                    app.dds.set_output(channels=i, value=float(value), var='amplitude', io_update=True)
                     if i == channel:
                         app['__LOG__'].update(f'Channel {i} amplitude set.\n', append=True)
                     app[f'__DDS_CHA_AMP__{i}'].update(background_color=Sg.theme_input_background_color())
@@ -73,7 +73,7 @@ def dds_events(app, event, values):
                     app['__LOG__'].update(f'Invalid phase for Channel {i}.\n', append=True)
                     app[f'__DDS_CHA_PHA__{i}'].update(background_color='orange')
                 else:
-                    app.dds.set_output(channels=channel, value=value, var='phase', io_update=True)
+                    app.dds.set_output(channels=i, value=value, var='phase', io_update=True)
                     app[f'__DDS_CHA_PHA__{i}'].update(background_color=Sg.theme_input_background_color())
                     if i == channel:
                         app['__LOG__'].update(f'Channel {i} phase set.\n', append=True)
@@ -232,6 +232,8 @@ def meas_events(app, event, values):
     elif event == '__MEAS_STOP__':
         app.measurement.stop()
         app.measurement.started = False
+        app.measurement.amplitudes = np.array([])
+        app.measurement.phases = np.array([])
 
         for rectangle, circle in zip(app.window_rectangles, app.window_circles):
             app.graph.TKCanvas.itemconfig(rectangle, fill='grey')
