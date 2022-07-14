@@ -8,6 +8,7 @@ from ui.demodulator import dem_frame
 from ui.laser import laser_frame
 from ui.measurement import measurement_tab
 import ui.drawings
+import ui.plot
 
 with open('app settings.json', 'r') as f:
     APP_SETTINGS = json.load(f)
@@ -107,6 +108,10 @@ class MainApplication(Sg.Window):
         # Drawing the Laser and Demodulator indicators
         self.graph = self.Element('__GRAPH__')
         self.graph, self.window_rectangles, self.window_circles, self.window_texts = ui.drawings.draw_the_things(self.graph)
+
+        # Drawing the Plot Canvas
+        self.canvas = self.Element('__CANVAS__')
+        self.plot = ui.plot.draw_figure(self.canvas.tk_canvas, 4, 2)
 
         # Instantiating the measurement
         self.save_location = Path.joinpath(Path(self['__MEAS_LOC__'].get()),

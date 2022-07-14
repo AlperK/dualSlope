@@ -1,6 +1,7 @@
 import PySimpleGUI as Sg
 from pathlib import Path
 from ui.drawings import measurement_graph
+from ui.plot import canvas
 
 
 def prepare_measurement_folder():
@@ -58,7 +59,7 @@ _FILE_LOC_ROW = [
 _FILE_LOC_FRA = Sg.Column(layout=_FILE_LOC_ROW)
 
 _GRAPH_ROW = [
-    [measurement_graph]
+    [measurement_graph, canvas]
 ]
 _GRAPH_COL = Sg.Column(layout=_GRAPH_ROW)
 
