@@ -33,8 +33,11 @@ def laser_count_generator():
 class Measurement:
     def __init__(self, laser_on_time, save_location=None, app=None):
         self.save_location = save_location
-        self.amplitude_save_location = None
-        self.phase_save_location = None
+        if self.save_location is not None:
+            self.amplitude_save_location = Path.joinpath(self.save_location,
+                                                         'amplitude.csv')
+            self.phase_save_location = Path.joinpath(self.save_location,
+                                                     'phase.csv')
 
         self.started = False
         self.paused = False
@@ -78,12 +81,12 @@ class Measurement:
         self.paused = False
         self.started = True
 
-    def create_measurement_files(self):
-        base = self.save_location
-        base.mkdir(parents=True, exist_ok=True)
+    def create_measurement_files(self, app_save_location):
+        self.base = app_save_location
+        self.base.mkdir(parents=True, exist_ok=True)
 
-        Path.joinpath(base, Path('amplitude.csv')).touch()
-        Path.joinpath(base, Path('phase.csv')).touch()
+        Path.joinpath(self.base, Path('amplitude.csv')).touch()
+        Path.joinpath(self.base, Path('phase.csv')).touch()
 
     def take_measurement(self):
 

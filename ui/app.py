@@ -2,6 +2,7 @@ import PySimpleGUI as Sg
 import json
 import hardware.hardware as hw
 import Measurement
+from pathlib import Path
 from ui.dds import dds_frame
 from ui.demodulator import dem_frame
 from ui.laser import laser_frame
@@ -76,6 +77,7 @@ class MainApplication(Sg.Window):
         self['__DDS_IF__'].bind("<Return>", key_modifier='')
         self['__MEAS_r__1'].bind("<Return>", key_modifier='')
         self['__MEAS_r__2'].bind("<Return>", key_modifier='')
+        self['__LASER_ON_TIME__'].bind("<Return>", key_modifier='')
 
         # Instantiating and initializing the DDS
         self.dds = hw.DDS(bus=1, device=0, pins=DEF_DDS_SETTINGS['pins'], max_speed=1_000_000)
@@ -107,7 +109,11 @@ class MainApplication(Sg.Window):
         self.graph, self.window_rectangles, self.window_circles, self.window_texts = ui.drawings.draw_the_things(self.graph)
 
         # Instantiating the measurement
-        self.save_location = None
+        self.save_location = Path.joinpath(Path(self['__MEAS_LOC__'].get()),
+                                           Path(self['__MEAS_GRP__'].get()),
+                                           Path(self['__MEAS_NUM__'].get()))
+        self.amplitude_save_location = Path.joinpath(self.save_location, Path('amplitude.csv'))
+        self.phase_save_location = Path.joinpath(self.save_location, Path('phase.csv'))
         self.laser_on_time = float(self['__LASER_ON_TIME__'].get()) / 1000
 
         self.measurement = Measurement.Measurement(laser_on_time=self.laser_on_time,

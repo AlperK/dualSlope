@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import numpy as np
 
+import Measurement
 
 with open('default dds settings.json') as f:
     DEF_DDS_SETTINGS = json.load(f)
@@ -205,22 +206,26 @@ def meas_events(app, event, values):
     # Creates and updates the save file location
 
     if event in ['__MEAS_LOC__', '__MEAS_GRP__', '__MEAS_NUM__']:
-        app.measurement.save_location = Path.joinpath(Path(values['__MEAS_LOC__']),
+        app.save_location = Path.joinpath(Path(values['__MEAS_LOC__']),
                                                       Path(values['__MEAS_GRP__']),
                                                       Path(values['__MEAS_NUM__']))
         # measurement.save_loc = app.save_location
-        app.measurement.amplitude_save_location = Path.joinpath(app.measurement.save_location, 'amplitude.csv')
-        app.measurement.phase_save_location = Path.joinpath(app.measurement.save_location, 'phase.csv')
+        app.amplitude_save_location = Path.joinpath(app.save_location, 'amplitude.csv')
+        app.phase_save_location = Path.joinpath(app.save_location, 'phase.csv')
 
-        print(app.measurement.save_location)
+        print(app.save_location)
 
     elif event == '__MEAS_CRT__':
         app['__LOG__'].update(f"Save file location: {app.save_location}\n",
                               append=True)
 
-        app.measurement.create_measurement_files()
+        app.measurement.create_measurement_files(app.save_location)
 
     elif event == '__MEAS_START__':
+        app.measurement = Measurement.Measurement(laser_on_time=app.laser_on_time,
+                                                  save_location=app.save_location,
+                                                  app=app)
+        app.measurement.create_measurement_files(app_save_location=app.save_location)
         _amplitudes = np.array([])
         _phases = np.array([])
         app.measurement.start()
@@ -304,8 +309,16 @@ def laser_events(app, event, values):
             app['__LOG__'].update(f"Laser-{channel} is turned off.\n", append=True)
 
     elif event == '__LASER_ON_TIME__':
-        app.measurement.laser_on_time = float(values[event]) / 1000
-        app['__LOG__'].update(f'laser on time {float(values[event])}\n', append=True)
+        if not values[event].isnumeric():
+            app['__LOG__'].update('Invalid Laser On Time.\n', append=True)
+            app[event].update(background_color='orange')
+            return
+
+        value = float(values[event])
+        app['__LOG__'].update(f'Laser On Time set to {value} ms.\n', append=True)
+        app[event].update(background_color=Sg.theme_input_background_color())
+        app.laser_on_time = value / 1000
+        # app['__LOG__'].update(f'laser on time {float(values[event])}\n', append=True)
 
 
 def event_handler(app, event, values):
