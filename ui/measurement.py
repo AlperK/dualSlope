@@ -2,18 +2,20 @@ import PySimpleGUI as Sg
 from pathlib import Path
 from ui.drawings import measurement_graph
 from ui.plot import canvas
+from datetime import date
 
 
 def prepare_measurement_folder():
     # Prepare the folder the measurements will be saved in
     home = Path('').home()
-    base_folder = Path.joinpath(home, 'Documents', 'Dual Slope Data')
+    base_folder = Path.joinpath(home, 'Documents', 'Dual Slope Data',
+                                date.today().strftime('%Y-%m-%d'))
     base_folder.mkdir(parents=True, exist_ok=True)
     return base_folder
 
 
 baseFolder = prepare_measurement_folder()
-_FILE_LOC_ROW = [
+_FILE_LOC_GRP = [
     [Sg.Text('Measurement Save File Location: ',
              size=(30, 1)),
      Sg.Input(Path(baseFolder),
@@ -42,13 +44,17 @@ _FILE_LOC_ROW = [
               size=(5, 1),
               enable_events=True,
               )],
+]
+
+_FILE_LOC_FRA = Sg.Frame(title='Save file location',
+                         layout=_FILE_LOC_GRP)
+
+_MEAS_CNT_GRP = [
     [Sg.Text('Laser on time (ms):',
              size=(30, 1)),
      Sg.Input(default_text=100,
               size=(5, 1),
               key='__LASER_ON_TIME__', enable_events=False), ],
-    [Sg.Button('Create', size=(10, 1),
-               key='__MEAS_CRT__', enable_events=True), ],
     [Sg.Button('Start', size=(10, 1),
                key='__MEAS_START__', enable_events=True),
      Sg.Button('Stop', size=(10, 1),
@@ -56,26 +62,27 @@ _FILE_LOC_ROW = [
      ],
 ]
 
-_FILE_LOC_FRA = Sg.Column(layout=_FILE_LOC_ROW)
-
-_GRAPH_ROW = [
-    [measurement_graph, canvas]
-]
-_GRAPH_COL = Sg.Column(layout=_GRAPH_ROW)
-
 _DIS_ROW = [
+    [measurement_graph],
     [Sg.Text('r1 (mm):'), Sg.Input(default_text='25', size=(5, 1),
                                    key='__MEAS_r__1', enable_events=False),
      Sg.Text('r2 (mm)'), Sg.Input(default_text='10', size=(5, 1),
                                   key='__MEAS_r__2', enable_events=False),
      ]
 ]
-_DIS_FRA = Sg.Column(layout=_DIS_ROW)
+_MEAS_CNT_FRA = Sg.Frame(title='Measurement Controls',
+                         layout=_MEAS_CNT_GRP + _DIS_ROW)
+
+_GRAPH_ROW = [
+    [canvas]
+]
+_GRAPH_COL = Sg.Column(layout=_GRAPH_ROW)
+
 
 measurement_tab = Sg.Tab(title='Measurement',
                          layout=[
                              [_FILE_LOC_FRA],
-                             [_GRAPH_COL],
-                             [_DIS_FRA],
+                             [_MEAS_CNT_FRA, _GRAPH_COL],
+                             # [_DIS_FRA],
                          ]
                          )
