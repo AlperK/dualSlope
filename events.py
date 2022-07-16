@@ -267,8 +267,7 @@ def meas_events(app, event, values):
         app.measurement.amplitudes = np.append(app.measurement.amplitudes, amplitude)
         app.measurement.phases = np.append(app.measurement.phases, demodulator.measure_phase())
 
-        # app['__LOG__'].update(f'Amplitudes: {app.measurement.amplitudes}\n', append=True)
-        # app['__LOG__'].update(f'Phases: {app.measurement.phases}\n', append=True)
+        app.plot.plot(x=values[event][0] + 1, y=values[event][1])
 
         if app.measurement.amplitudes.size >= 8:
             app.measurement.save_arrays()
@@ -327,14 +326,14 @@ def event_handler(app, event, values):
         return -1
     else:
         event_group = event.split('__')[1].split('_')[0]
-        print(values)
+        # print(values)
         try:
             value = values[event]
         except KeyError:
             value = None
-        print(f'Event Group: {event_group}')
-        print(f'Event : {event}')
-        print(f'Event Value: {value}')
+        # print(f'Event Group: {event_group}')
+        # print(f'Event : {event}')
+        # print(f'Event Value: {value}')
 
         if event_group == 'DDS':
             dds_events(app, event, values)

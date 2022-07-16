@@ -9,7 +9,7 @@ GPIO.setmode(GPIO.BOARD)
 app = app.MainApplication()
 
 while True:
-    event, values = app.read(timeout=0)
+    event, values = app.read()
     if event not in ['__TIMEOUT__', Sg.WIN_CLOSED]:
         # print(f'event: {event}, value: {values[event]}')
         a = event_handler(app, event, values)

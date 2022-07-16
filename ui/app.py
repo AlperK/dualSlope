@@ -9,6 +9,7 @@ from ui.laser import laser_frame
 from ui.measurement import measurement_tab
 import ui.drawings
 import ui.plot
+import ui.updatable_plots
 
 with open('app settings.json', 'r') as f:
     APP_SETTINGS = json.load(f)
@@ -111,7 +112,9 @@ class MainApplication(Sg.Window):
 
         # Drawing the Plot Canvas
         self.canvas = self.Element('__CANVAS__')
-        self.plot = ui.plot.draw_figure(self.canvas.tk_canvas, 4, 2)
+        self.plot = ui.updatable_plots.UpdatablePlot(canvas=self.canvas)
+        self.plot.plot(x=None, y=None)
+        # self.plot = ui.plot.draw_figure(self.canvas.tk_canvas, 4, 2)
 
         # Instantiating the measurement
         self.save_location = Path.joinpath(Path(self['__MEAS_LOC__'].get()),
