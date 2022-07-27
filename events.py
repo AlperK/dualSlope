@@ -226,6 +226,7 @@ def meas_events(app, event, values):
                                                   save_location=app.save_location,
                                                   app=app)
         app.measurement.create_measurement_files(app_save_location=app.save_location)
+        app.measurement.save_measurement_settings(app)
         _amplitudes = np.array([])
         _phases = np.array([])
         app.measurement.start()
@@ -267,9 +268,16 @@ def meas_events(app, event, values):
         app.measurement.amplitudes = np.append(app.measurement.amplitudes, amplitude)
         app.measurement.phases = np.append(app.measurement.phases, demodulator.measure_phase())
 
-        app.plot.plot(x=values[event][0] + 1, y=values[event][1])
+        # app.plot.plot(x=values[event][0] + 1, y=values[event][1])
 
         if app.measurement.amplitudes.size >= 8:
+            a, s = app.measurement._get_optical_parameters(frequency=1e6*float(app['__DDS_RF__'].get()) +
+                                                                     1e3*float(app['__DDS_IF__'].get()),
+                                                           wavelength=690)
+            app['__LOG__'].update(f'Absorption: {np.round(a, 4)}, ', append=True)
+            app['__LOG__'].update(f'Error: {np.round((a[1] - 0.0081) / 0.0081 * 100, 2)}\n', append=True)
+            app['__LOG__'].update(f'Scattering: {np.round(s, 4)}, ', append=True)
+            app['__LOG__'].update(f'Error: {np.round((s[1] - 0.761) / 0.761 * 100, 2)}\n', append=True)
             app.measurement.save_arrays()
             app.measurement.reset_arrays()
 

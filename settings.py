@@ -8,15 +8,15 @@ app_settings = {
 }
 
 default_dds_settings = {
-    'RF': 100,
+    'RF': 95,
     'IF': 1,
     'refClk': 25e6,
     'PLL_MUL': 20,
     'activeChannels': [True, True, True, True],
-    'channelFrequencies': [100.001e6, 100.001e6, 100e6, 100e6],
-    'channelAmplitudes': [0.15, 0.1, 0.5, 0.5],
+    'channelFrequencies': [95.001e6, 95.001e6, 95e6, 95e6],
+    'channelAmplitudes': [0.5, 0.01, 0.5, 0.5],
     'channelPhases': [0, 0, 0, 180],
-    'channelDividers': [4, 4, 1, 1],
+    'channelDividers': [2, 8, 1, 1],
     'pins': {
         'IO_UP': 36,
         'RESET': 37,
@@ -35,8 +35,9 @@ default_dem_settings = {
     'laserOnTime': 100e-3,
     'Demodulator-1': {
         'PHA_AMP_PIN': 29,
-        'amplitudeCoefficients': {'slope': 3.332,
-                                  'intercept': -9.2,
+        'amplitudeCoefficients': {'slope': 3.0,
+                                  'intercept': 50.0,
+                                  'offset': 8.12,
                                   },
         'phaseCoefficients': {'A': 0.3006,
                               'freq': 0.0027722,
@@ -46,8 +47,10 @@ default_dem_settings = {
     },
     'Demodulator-2': {
         'PHA_AMP_PIN': 31,
-        'amplitudeCoefficients': {'slope': 3.332,
-                                  'intercept': -10.192},
+        'amplitudeCoefficients': {'slope': 2.95,
+                                  'intercept': 19.06,
+                                  'offset': 7.4,
+                                  },
         'phaseCoefficients': {'A': 0.3003,
                               'freq': 0.002767,
                               'phi': 0.01447449,

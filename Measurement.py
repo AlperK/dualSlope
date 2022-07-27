@@ -2,6 +2,7 @@ import time
 from pathlib import Path
 import threading
 import numpy as np
+import json
 
 
 def demodulator_count_generator():
@@ -28,6 +29,28 @@ def laser_count_generator():
             i = init()
         else:
             num += 1
+
+
+def _linearize_amplitudes(amplitudes, separations, average=False):
+    if average:
+        return np.average(np.log(np.square(separations) * amplitudes), axis=1)
+    else:
+        return np.log(np.square(separations)*amplitudes)
+
+
+def _get_slope(arr, separations, average=False, is_phase=False):
+    if is_phase:
+
+        if average:
+            return np.average((np.diff(arr) % (np.pi/2)) / np.diff(separations), axis=2)
+        else:
+            return np.diff(arr) / np.diff(separations)
+
+    else:
+        if average:
+            return np.average(np.diff(arr) / np.diff(separations), axis=2)
+        else:
+            return np.diff(arr) / np.diff(separations)
 
 
 class Measurement:
@@ -87,6 +110,7 @@ class Measurement:
 
         Path.joinpath(self.base, Path('amplitude.csv')).touch()
         Path.joinpath(self.base, Path('phase.csv')).touch()
+        Path.joinpath(self.base, Path('measurement settings.json')).touch()
 
     def take_measurement(self):
 
@@ -112,3 +136,82 @@ class Measurement:
             np.savetxt(f, X=[self.amplitudes], delimiter=',', fmt='%4.2f')
         with open(self.phase_save_location, 'a+') as f:
             np.savetxt(f, X=[self.phases], delimiter=',', fmt='%3.2f')
+
+    def get_slopes(self, average=False):
+        """
+        Calculates the amplitude and phase slopes.
+        :return: ([amplitude_slope_1, amplitude_slope_2], [phase_slope_1, phase_slope_2])
+        """
+
+        separations = np.array([[[self.r1, self.r2], [self.r2, self.r1]],
+                                [[self.r1, self.r2], [self.r2, self.r1]]])
+        amplitudes = self.amplitudes.reshape((2, 2, 2))
+        linearized_amplitudes = _linearize_amplitudes(amplitudes, separations)
+
+        phases = np.deg2rad(self.phases.reshape((2, 2, 2)))
+
+        if average:
+            amplitude_slopes = np.average(_get_slope(linearized_amplitudes, separations, average, is_phase=False), axis=1)
+            # print(linearized_amplitudes)
+            # print(amplitude_slopes)
+            phase_slopes = np.average(_get_slope(phases, separations, average, is_phase=False), axis=1)
+        else:
+            amplitude_slopes = _get_slope(linearized_amplitudes, separations, average, is_phase=False)
+            phase_slopes = _get_slope(phases, separations, average, is_phase=False)
+
+        # print(amplitude_slopes)
+        # print(phase_slopes)
+        return -amplitude_slopes, -phase_slopes
+
+    def _get_optical_parameters(self, frequency, wavelength):
+        print(frequency)
+        if wavelength == 830:
+            i = 0
+        if wavelength in [685, 690]:
+            i = 1
+        else:
+            print("ERROR")
+            return
+        separations = np.array([[[self.r1, self.r2], [self.r2, self.r1]],
+                                [[self.r1, self.r2], [self.r2, self.r1]]])
+        # amplitudes = self.amplitudes.reshape((2, 2, 2))[i]
+        amplitudes = self.amplitudes.reshape((2, 2, 2))
+        # amplitudes *= np.array([[[1, 1], [1, 1]],
+        #                         [[1, 1], [1.109*1, 1.04]]])
+        # amplitudes *= np.array([[[1, 1], [1, 1]],
+        #                         [[1, 1.1157], [1, 1.1157]]])
+        # phases = self.phases.reshape((2, 2, 2))[i]
+        phases = self.phases.reshape((2, 2, 2))
+        # phases += np.array([[[0, 0], [0, 0]],
+        #                     [[0, 0], [2.4, 6.9]]])
+        # phases += np.array([[[0, 0], [0, 0]],
+        #                     [[15.75, 0], [15.75, 0]]])
+
+        linearized_amplitudes = _linearize_amplitudes(amplitudes, separations)
+        amplitude_slopes = _get_slope(linearized_amplitudes, separations, average=True, is_phase=False)
+        phase_slopes = _get_slope(phases, separations, average=True, is_phase=False)
+        c = 2.998e11
+        n = 1.4
+        mod_frequency = 2 * np.pi * frequency
+        amplitude_slope, phase_slope = self.get_slopes(average=True)
+        print(f'Sac: {amplitude_slope}')
+        print(f'Sp: {phase_slope}')
+
+        absorption_coefficient = (mod_frequency * n) / (2 * c)
+        absorption_coefficient *= (phase_slope / amplitude_slope) - (amplitude_slope / phase_slope)
+
+        scattering_coefficient = (amplitude_slope ** 2 - phase_slope ** 2) / (3 * absorption_coefficient)
+
+        return absorption_coefficient, scattering_coefficient
+
+    def save_measurement_settings(self, app):
+        measurement_settings = {
+            'RF': str(app['__DDS_RF__'].get()),
+            'IF': str(app['__DDS_IF__'].get()),
+            'channelAmplitudes': [str(app[f'__DDS_CHA_AMP__{i}'].get()) for i in range(4)]
+        }
+        print(measurement_settings)
+        self.measurement_settings_location = Path.joinpath(self.base,
+                                                           Path('measurement settings.json'))
+        with open(self.measurement_settings_location, 'w') as f:
+            json.dump(measurement_settings, f)

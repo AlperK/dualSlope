@@ -1,23 +1,24 @@
-import csv
+import numpy as np
+from Measurement import _get_slope, _linearize_amplitudes
 
 
-data = [[-0.1, 0.2, 1.0, -0.4, -0.43, 0.3, 0.2, -0.11],
-        [0.1, -0.2, -1.0, 0.4, 0.43, -0.3, -0.2, 0.11]]
+separations = np.array(
+    ([[25, 35], [35, 25]],
+     [[25, 35], [35, 25]])
+) / 10
 
+amplitudes = np.array((50, 15, 15, 25, 1500, 120, 450, 600)).reshape((2, 2, 2))
 
-header = []
-for laser in range(4):
-    for apd in range(2):
-        seq = ('L' + str(laser+1), 'APD' + str(apd+1))
-        header.append('-'.join(seq))
-print(header)
+phases = np.array(([10, 20], [40, 32], [90, 165], [90, 120])).reshape((2, 2, 2))
 
-with open('csv_test.csv', 'w+') as f:
-    writer = csv.writer(f, delimiter=',')
-    writer.writerows([header])
+print(f'amplitudes: {amplitudes}')
 
-with open('csv_test.csv', 'a+') as f:
-    writer = csv.writer(f, delimiter=',')
-    for d in data:
-        print(d)
-        writer.writerows([d])
+linearized_amplitudes = _linearize_amplitudes(amplitudes, separations)
+print(f'linearized_amplitudes: {linearized_amplitudes}')
+
+amplitude_slopes = _get_slope(linearized_amplitudes, separations)
+print(f'amplitude_slopes: {amplitude_slopes}')
+
+phase_slopes = _get_slope(phases, separations, average=True)
+print(f'phase_slopes: {phase_slopes}')
+

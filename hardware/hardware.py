@@ -152,7 +152,8 @@ class Demodulator:
         voltage = temp.mean() * 1000
         if not raw:
             # amplitude = (voltage - self.amplitude_coefficients['intercept']) / self.amplitude_coefficients['slope']
-            amplitude = voltage * self.amplitude_coefficients['slope'] + self.amplitude_coefficients['intercept']
+            amplitude = voltage * self.amplitude_coefficients['slope'] + \
+                        self.amplitude_coefficients['intercept']
             return amplitude
         else:
             return voltage
