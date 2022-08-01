@@ -14,7 +14,7 @@ default_dds_settings = {
     'PLL_MUL': 20,
     'activeChannels': [True, True, True, True],
     'channelFrequencies': [95.001e6, 95.001e6, 95e6, 95e6],
-    'channelAmplitudes': [0.5, 0.01, 0.5, 0.5],
+    'channelAmplitudes': [0.5, 0.02, 0.5, 0.5],
     'channelPhases': [0, 0, 0, 180],
     'channelDividers': [2, 8, 1, 1],
     'pins': {
@@ -44,6 +44,7 @@ default_dem_settings = {
                               # 'phi': 0.01447449,
                               'phi': 0.0136,
                               'offset': 0.478},
+        'integrationCount': 1024,
     },
     'Demodulator-2': {
         'PHA_AMP_PIN': 31,
@@ -56,6 +57,7 @@ default_dem_settings = {
                               'phi': 0.01447449,
                               'offset': 0.3491,
                               },
+        'integrationCount': 1024,
     }
 }
 

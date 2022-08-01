@@ -39,18 +39,22 @@ def _linearize_amplitudes(amplitudes, separations, average=False):
 
 
 def _get_slope(arr, separations, average=False, is_phase=False):
-    if is_phase:
-
-        if average:
-            return np.average((np.diff(arr) % (np.pi/2)) / np.diff(separations), axis=2)
-        else:
-            return np.diff(arr) / np.diff(separations)
-
+    # if is_phase:
+    #
+    #     if average:
+    #         print(np.diff(separations))
+    #         return np.average((np.diff(arr) % (np.pi/2)) / np.diff(separations), axis=2)
+    #     else:
+    #         print(np.diff(separations))
+    #         return np.diff(arr) / np.diff(separations)
+    #
+    # else:
+    if average:
+        print(np.diff(separations))
+        return np.average(np.diff(arr) / np.diff(separations), axis=2)
     else:
-        if average:
-            return np.average(np.diff(arr) / np.diff(separations), axis=2)
-        else:
-            return np.diff(arr) / np.diff(separations)
+        print(np.diff(separations))
+        return np.diff(arr) / np.diff(separations)
 
 
 class Measurement:
@@ -143,8 +147,8 @@ class Measurement:
         :return: ([amplitude_slope_1, amplitude_slope_2], [phase_slope_1, phase_slope_2])
         """
 
-        separations = np.array([[[self.r1, self.r2], [self.r2, self.r1]],
-                                [[self.r1, self.r2], [self.r2, self.r1]]])
+        separations = np.array([[[self.r1, self.r1 + self.r2], [self.r1 + self.r2, self.r1]],
+                                [[self.r1, self.r1 + self.r2], [self.r1 + self.r2, self.r1]]])
         amplitudes = self.amplitudes.reshape((2, 2, 2))
         linearized_amplitudes = _linearize_amplitudes(amplitudes, separations)
 
@@ -161,7 +165,7 @@ class Measurement:
 
         # print(amplitude_slopes)
         # print(phase_slopes)
-        return -amplitude_slopes, -phase_slopes
+        return amplitude_slopes, phase_slopes
 
     def _get_optical_parameters(self, frequency, wavelength):
         print(frequency)
@@ -194,8 +198,8 @@ class Measurement:
         n = 1.4
         mod_frequency = 2 * np.pi * frequency
         amplitude_slope, phase_slope = self.get_slopes(average=True)
-        print(f'Sac: {amplitude_slope}')
-        print(f'Sp: {phase_slope}')
+        print(f'Sac: {amplitude_slope}, average: {np.average(amplitude_slope)}')
+        print(f'Sp: {phase_slope}, average: {np.average(phase_slope)}')
 
         absorption_coefficient = (mod_frequency * n) / (2 * c)
         absorption_coefficient *= (phase_slope / amplitude_slope) - (amplitude_slope / phase_slope)
@@ -210,7 +214,7 @@ class Measurement:
             'IF': str(app['__DDS_IF__'].get()),
             'channelAmplitudes': [str(app[f'__DDS_CHA_AMP__{i}'].get()) for i in range(4)]
         }
-        print(measurement_settings)
+        # print(measurement_settings)
         self.measurement_settings_location = Path.joinpath(self.base,
                                                            Path('measurement settings.json'))
         with open(self.measurement_settings_location, 'w') as f:

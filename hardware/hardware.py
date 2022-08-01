@@ -107,7 +107,7 @@ class Demodulator:
 
         self.adc = adc
         self.laser_on_time = settings['laserOnTime']
-        self.integration_number = 128
+        self.integration_number = settings[str(self)]['integrationCount']
 
         self.amp_pha_pin = settings[str(self)]['PHA_AMP_PIN']
         GPIO.setup(self.amp_pha_pin, GPIO.OUT)
