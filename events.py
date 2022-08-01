@@ -32,9 +32,15 @@ def dds_events(app, event, values):
         app.dds.reset()
         app.dds.load_settings(settings=DEF_DDS_SETTINGS)
 
-        app['__DDS_RF__'].update(value=values['__DDS_RF__'])
-        app['__DDS_IF__'].update(value=values['__DDS_IF__'])
-        app['__DDS_PLL_MUL__'].update(values=['__DDS_PLL_MUL__'])
+        app['__DDS_RF__'].update(value=DEF_DDS_SETTINGS['RF'])
+        app['__DDS_IF__'].update(value=DEF_DDS_SETTINGS['IF'])
+        app['__DDS_PLL_MUL__'].update(value=DEF_DDS_SETTINGS['PLL_MUL'])
+
+        for channel in range(4):
+            app[f'__DDS_CHA_AMP__{channel}'].update(value=DEF_DDS_SETTINGS['channelAmplitudes'][channel])
+            app[f'__DDS_CHA_PHA__{channel}'].update(value=DEF_DDS_SETTINGS['channelPhases'][channel])
+            app[f'__DDS_CHA_DIV__{channel}'].update(value=DEF_DDS_SETTINGS['channelDividers'][channel])
+
         app['__LOG__'].update(f"DDS reset.\n", append=True)
 
     elif event == '__DDS_PLL_MUL__':
