@@ -3,6 +3,7 @@ import RPi.GPIO as GPIO
 import json
 from pathlib import Path
 import numpy as np
+import random
 
 import Measurement
 
@@ -32,6 +33,7 @@ def dds_events(app, event, values):
         app.dds.reset()
         app.dds.load_settings(settings=DEF_DDS_SETTINGS)
 
+        # Put the default settings back into the UI.
         app['__DDS_RF__'].update(value=DEF_DDS_SETTINGS['RF'])
         app['__DDS_IF__'].update(value=DEF_DDS_SETTINGS['IF'])
         app['__DDS_PLL_MUL__'].update(value=DEF_DDS_SETTINGS['PLL_MUL'])
@@ -150,7 +152,8 @@ def adc_events(app, event, values):
     if event in [f'__ADC_RANGE__{channel}' for channel in range(1, 3)]:
         channel = int(event[-1])
         new_range = DEF_ADC_SETTINGS['rangeList'].index(values[event])
-        if new_range >= 5:
+
+        if new_range >= 5: # Check if the new range is bipolar or not.
             new_range += 3
         old_range = getattr(getattr(app, f'demodulator{channel}'), 'adc').get_range()
         getattr(getattr(app, f'demodulator{channel}'), 'adc').set_range(new_range)
@@ -258,9 +261,12 @@ def meas_events(app, event, values):
         for rectangle, circle in zip(app.window_rectangles, app.window_circles):
             app.graph.TKCanvas.itemconfig(rectangle, fill='grey')
             app.graph.TKCanvas.itemconfig(circle, fill='grey')
+        for channel in range(1, 5):
+            getattr(app, f'laser{channel}').turn_off()
         app['__LOG__'].update('Long operation stopped.\n', append=True)
 
     elif event == '__MEAS_PROGRESS__':
+
         laser_count = int(values[event][0]) % 2
         laser = getattr(app, f"laser{values[event][0]+1}")
 
@@ -283,17 +289,20 @@ def meas_events(app, event, values):
         app.measurement.phases = np.append(app.measurement.phases, demodulator.measure_phase())
 
         # app.plot.plot(x=values[event][0] + 1, y=values[event][1])
-
         if app.measurement.amplitudes.size >= 8:
             a, s = app.measurement._get_optical_parameters(frequency=1e6*float(app['__DDS_RF__'].get()) +
                                                                      1e3*float(app['__DDS_IF__'].get()),
                                                            wavelength=690)
-            app['__LOG__'].update(f'Absorption: {np.round(a, 4)}, ', append=True)
-            app['__LOG__'].update(f'Error: {np.round((a[1] - 0.0081) / 0.0081 * 100, 2)}\n', append=True)
-            app['__LOG__'].update(f'Scattering: {np.round(s, 4)}, ', append=True)
-            app['__LOG__'].update(f'Error: {np.round((s[1] - 0.761) / 0.761 * 100, 2)}\n', append=True)
+            if random.uniform(0, 1) > 0:
+                app['__LOG__'].update(f'Absorption: {np.round(a, 4)}, ', append=True)
+                app['__LOG__'].update(f'Error: {np.round((a[1] - 0.0081) / 0.0081 * 100, 2)}\n', append=True)
+                app['__LOG__'].update(f'Scattering: {np.round(s, 4)}, ', append=True)
+                app['__LOG__'].update(f'Error: {np.round((s[1] - 0.761) / 0.761 * 100, 2)}\n', append=True)
+                app['__LOG__'].update(f'\n', append=True)
+                # print_counter = 0
             app.measurement.save_arrays()
             app.measurement.reset_arrays()
+            # print_counter += 1
 
     elif event in ['__MEAS_r__1', '__MEAS_r__2']:
         for i in range(1, 3):

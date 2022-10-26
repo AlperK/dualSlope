@@ -50,10 +50,10 @@ def _get_slope(arr, separations, average=False, is_phase=False):
     #
     # else:
     if average:
-        print(np.diff(separations))
+        # print(np.diff(separations))
         return np.average(np.diff(arr) / np.diff(separations), axis=2)
     else:
-        print(np.diff(separations))
+        # print(np.diff(separations))
         return np.diff(arr) / np.diff(separations)
 
 
@@ -198,8 +198,8 @@ class Measurement:
         n = 1.4
         mod_frequency = 2 * np.pi * frequency
         amplitude_slope, phase_slope = self.get_slopes(average=True)
-        print(f'Sac: {amplitude_slope}, average: {np.average(amplitude_slope)}')
-        print(f'Sp: {phase_slope}, average: {np.average(phase_slope)}')
+        # print(f'Sac: {amplitude_slope}, average: {np.average(amplitude_slope)}')
+        # print(f'Sp: {phase_slope}, average: {np.average(phase_slope)}')
 
         absorption_coefficient = (mod_frequency * n) / (2 * c)
         absorption_coefficient *= (phase_slope / amplitude_slope) - (amplitude_slope / phase_slope)
