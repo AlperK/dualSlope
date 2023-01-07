@@ -168,7 +168,7 @@ class Measurement:
         return amplitude_slopes, phase_slopes
 
     def _get_optical_parameters(self, frequency, wavelength):
-        print(frequency)
+        # print(frequency)
         if wavelength == 830:
             i = 0
         if wavelength in [685, 690]:

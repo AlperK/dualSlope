@@ -18,7 +18,7 @@ class ADS8685:
 
         self.spi = spidev.SpiDev()
         self.spi.open(bus, device)
-        self.spi.max_speed_hz = 1_000_000
+        self.spi.max_speed_hz = max_speed_hz
 
         self.reset_pin = reset_pin
         GPIO.setup(reset_pin, GPIO.OUT)
