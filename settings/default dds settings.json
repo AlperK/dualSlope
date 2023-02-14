@@ -1,0 +1,1 @@
+{"RF": 80, "IF": 1, "refClk": 25000000.0, "PLL_MUL": 20, "activeChannels": [true, true, true, true], "channelFrequencies": [80001000.0, 80001000.0, 80000000.0, 80000000.0], "channelAmplitudes": [0.5, 0.02, 0.5, 0.5], "channelPhases": [0, 0, 0, 180], "channelDividers": [4, 8, 1, 1], "pins": {"IO_UP": 36, "RESET": 37, "P_DOWN": 33}}
