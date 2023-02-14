@@ -1,4 +1,10 @@
 import PySimpleGUI as Sg
+import json
+from pathlib import Path
+
+
+with open(Path.joinpath(Path().resolve(), 'settings', 'app settings.json')) as f:
+    Sg.theme(json.load(f)['theme'])
 
 measurement_graph = Sg.Graph(canvas_size=(400, 100),
                              graph_bottom_left=(0, 0),

@@ -19,7 +19,7 @@ class UpdatablePlot:
         self.x = x
         self.y = y
         self.figure_controller()
-        self.figure_drawer()
+        # self.figure_drawer()
 
     def figure_controller(self):
         if self.figure is None:
@@ -32,7 +32,7 @@ class UpdatablePlot:
                                              marker='o',
                                              color='blue')
             self.figure.tight_layout()
-            self.axes.draw_artist(self.scatter)
+            # self.axes.draw_artist(self.scatter)
             self.background = self.figure.canvas.copy_from_bbox(self.axes.bbox)
             print('background')
         else:

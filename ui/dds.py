@@ -1,11 +1,13 @@
+import json
+from pathlib import Path
 import PySimpleGUI as Sg
 import numpy as np
-import json
 
-with open('default dds settings.json') as f:
+with open(Path.joinpath(Path().resolve(), 'settings', 'default dds settings.json')) as f:
     DEF_DDS_SETTINGS = json.load(f)
+with open(Path.joinpath(Path().resolve(), 'settings', 'app settings.json')) as f:
+    Sg.theme(json.load(f)['theme'])
 
-Sg.theme('DarkTeal6')
 
 # RF and IF frequency settings
 _CHA_FRE_ROW = [

@@ -1,26 +1,26 @@
-import PySimpleGUI as Sg
 import json
-import hardware.hardware as hw
-import Measurement
 from pathlib import Path
+import PySimpleGUI as Sg
+import Measurement
+import hardware.hardware as hw
+import ui.drawings
+import ui.plot
+import ui.updatable_plots
 from ui.dds import dds_frame
 from ui.demodulator import dem_frame
 from ui.laser import laser_frame
 from ui.measurement import measurement_tab
-import ui.drawings
-import ui.plot
-import ui.updatable_plots
 
-with open('app settings.json', 'r') as f:
+
+with open(Path.joinpath(Path().resolve(), 'settings', 'app settings.json'), 'r') as f:
     APP_SETTINGS = json.load(f)
-with open('default dds settings.json', 'r') as f:
+    Sg.theme(APP_SETTINGS['theme'])
+with open(Path.joinpath(Path().resolve(), 'settings', 'default dds settings.json'), 'r') as f:
     DEF_DDS_SETTINGS = json.load(f)
-with open('default adc settings.json', 'r') as f:
+with open(Path.joinpath(Path().resolve(), 'settings', 'default adc settings.json'), 'r') as f:
     DEF_ADC_SETTINGS = json.load(f)
-with open('default dem settings.json', 'r') as f:
+with open(Path.joinpath(Path().resolve(), 'settings', 'default dem settings.json'), 'r') as f:
     DEF_DEM_SETTINGS = json.load(f)
-
-Sg.theme('DarkTeal6')
 
 
 class MainApplication(Sg.Window):
@@ -30,8 +30,8 @@ class MainApplication(Sg.Window):
 
     def __init__(self):
         # General window settings
-        Sg.change_look_and_feel(APP_SETTINGS['theme'])
-        self.theme = APP_SETTINGS['theme']
+        # Sg.theme_global(APP_SETTINGS['theme'])
+        # Sg.theme(APP_SETTINGS['theme'])
         self.title = APP_SETTINGS['title']
         self.win_size = (APP_SETTINGS['width'], APP_SETTINGS['height'])
 
@@ -129,4 +129,3 @@ class MainApplication(Sg.Window):
         self.measurement = Measurement.Measurement(laser_on_time=self.laser_on_time,
                                                    save_location=self.save_location,
                                                    app=self)
-

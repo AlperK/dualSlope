@@ -1,12 +1,13 @@
-import PySimpleGUI as Sg
 import json
+from pathlib import Path
+import PySimpleGUI as Sg
 
-with open('default adc settings.json') as f:
+with open(Path.joinpath(Path().resolve(), 'settings', 'default adc settings.json')) as f:
     DEF_ADC_SETTINGS = json.load(f)
-with open('default dem settings.json') as f:
+with open(Path.joinpath(Path().resolve(), 'settings', 'default dem settings.json')) as f:
     DEF_DEM_SETTINGS = json.load(f)
-
-Sg.theme('DarkTeal6')
+with open(Path.joinpath(Path().resolve(), 'settings', 'app settings.json')) as f:
+    Sg.theme(json.load(f)['theme'])
 
 _DEM_COL_1 = Sg.Column(layout=[
     [

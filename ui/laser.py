@@ -1,4 +1,8 @@
 import PySimpleGUI as Sg
+# import json
+#
+# with open(Path.joinpath(Path().resolve(), 'settings', 'app settings.json')) as f:
+#     Sg.theme(json.load(f)['theme'])
 
 _LAS_COL = Sg.Column(
     layout=[
@@ -14,6 +18,7 @@ _LAS_COL = Sg.Column(
 
 laser_frame = Sg.Frame(
     title='Laser Controls',
+    # background_color=Sg.theme_background_color(),
     layout=[
         [_LAS_COL],
     ],

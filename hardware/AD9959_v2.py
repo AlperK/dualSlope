@@ -6,10 +6,11 @@
 * There seems to be a bug at hardware level when sweeping the frequency at an amplitude scaling < 1. The correct current divider scaling is written to the 'CFR' register when initializing the frequency sweep, but after an _io_update call, the value in that register is 0 (i.e. current scaling of 8). By resetting the current scaling right after the _io_update call, this bug is fixed.
 """
 
-import spidev
-import RPi.GPIO as GPIO
-from warnings import warn
 import time
+from warnings import warn
+
+import RPi.GPIO as GPIO
+import spidev
 
 # Channel Pins
 _CH_PINS = {

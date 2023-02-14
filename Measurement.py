@@ -1,8 +1,9 @@
+import json
+import threading
 import time
 from pathlib import Path
-import threading
+
 import numpy as np
-import json
 
 
 def demodulator_count_generator():

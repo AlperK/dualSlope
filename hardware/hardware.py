@@ -1,8 +1,8 @@
+import time
+import RPi.GPIO as GPIO
+import numpy as np
 from hardware.AD9959_v2 import AD9959 as AD9959
 from hardware.ADS8685 import ADS8685 as ADS8685
-import RPi.GPIO as GPIO
-import time
-import numpy as np
 
 
 class DDS(AD9959):

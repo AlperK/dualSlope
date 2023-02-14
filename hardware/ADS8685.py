@@ -1,6 +1,7 @@
+import time
+
 import RPi.GPIO as GPIO
 import spidev
-import time
 
 
 class ADS8685:
@@ -75,15 +76,14 @@ class ADS8685:
     def get_range(self):
         # self.spi.xfer(self._create_message(self.READ, self.registers['RANGE_SEL_REG']))
         value = self.spi.xfer(self._create_message(self.READ, self.registers['RANGE_SEL_REG']))
-        print(f'value: {value}')
+        # print(f'value: {value}')
 
         mask = 0b00001111
         content = self._read('RANGE_SEL_REG')
 
         range_sel = content[1] & mask
 
-        # return 'Full Scale Range: {0}V to {1}V'.format(self.ranges[range_sel][1] * 4.096, self.ranges[range_sel][0] * 4.096)
-        return content, range_sel
+        return range_sel
 
     def set_range(self, range_sel):
         assert range_sel in self.ranges, '%i is not a valid range.' % range_sel
@@ -94,7 +94,7 @@ class ADS8685:
         self.full_scale = self.pos_full_scale - self.neg_full_scale
         self.range = self.pos_full_scale - self.neg_full_scale
         self.LSB = self.full_scale / 2 ** 16
-        print('Positive Full Scale: {0}V, Negative Full Scale: {1}'.format(self.pos_full_scale, self.neg_full_scale))
+        # print('Positive Full Scale: {0}V, Negative Full Scale: {1}'.format(self.pos_full_scale, self.neg_full_scale))
 
     def _create_message(self, op_code, reg_address, message_0=0x0, message_1=0x0):
         return [op_code, reg_address, message_0, message_1]

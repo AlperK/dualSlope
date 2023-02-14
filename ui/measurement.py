@@ -1,8 +1,9 @@
-import PySimpleGUI as Sg
+from datetime import date
 from pathlib import Path
+import PySimpleGUI as Sg
 from ui.drawings import measurement_graph
 from ui.plot import canvas
-from datetime import date
+import json
 
 
 def prepare_measurement_folder():
@@ -13,6 +14,9 @@ def prepare_measurement_folder():
     base_folder.mkdir(parents=True, exist_ok=True)
     return base_folder
 
+
+with open(Path.joinpath(Path().resolve(), 'settings', 'app settings.json')) as f:
+    Sg.theme(json.load(f)['theme'])
 
 baseFolder = prepare_measurement_folder()
 _FILE_LOC_GRP = [
