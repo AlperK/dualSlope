@@ -90,9 +90,9 @@ def meas_events(app, event, values):
                                                            wavelength=690)
             if random.uniform(0, 1) > 0:
                 app['__LOG__'].update(f'Absorption: {np.round(a, 4)}, ', append=True)
-                app['__LOG__'].update(f'Error: {np.round((a[1] - 0.0081) / 0.0081 * 100, 2)}\n', append=True)
+                app['__LOG__'].update(f'Error: {np.round((a[1] - 0.0015) / 0.0015 * 100, 2)}\n', append=True)
                 app['__LOG__'].update(f'Scattering: {np.round(s, 4)}, ', append=True)
-                app['__LOG__'].update(f'Error: {np.round((s[1] - 0.761) / 0.761 * 100, 2)}\n', append=True)
+                app['__LOG__'].update(f'Error: {np.round((s[1] - 1.023) / 1.023 * 100, 2)}\n', append=True)
                 app['__LOG__'].update(f'\n', append=True)
                 # print_counter = 0
             app.measurement.save_arrays()

@@ -10,6 +10,7 @@ from ui.dds import dds_frame
 from ui.demodulator import dem_frame
 from ui.laser import laser_frame
 from ui.measurement import measurement_tab
+from ui.calibration import calibration_tab
 
 
 with open(Path.joinpath(Path().resolve(), 'settings', 'app settings.json'), 'r') as f:
@@ -58,6 +59,7 @@ class MainApplication(Sg.Window):
                                     layout=[
                                         [self.hardware_tab],
                                         [self.measurement_tab],
+                                        [ui.calibration.calibration_tab],
                                     ],
                                     expand_x=True)
 

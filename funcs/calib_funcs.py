@@ -127,3 +127,12 @@ def start_amplitude_calibration(demodulator, val_dict):
             with open(file, 'a+') as csv_file:
                 writer = csv.writer(csv_file, delimiter=',')
                 writer.writerow([amplitude1, demodulator.measure_amplitude_voltage()])
+
+def try_to_connect_to_device(USB_ID):
+    rm = pyvisa.ResourceManager('@py')
+    try:
+        # sigGen = rm.open_resource('USB0::6833::1601::DG4C141400166::0::INSTR')
+        sigGen = rm.open_resource(USB_ID)
+    except:
+        update_event_log('Could not find RIGOL DG4162', val_dict)
+        return

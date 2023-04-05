@@ -6,6 +6,7 @@ from event_handlers.dds_events import dds_events
 from event_handlers.demodulator_events import dem_events
 from event_handlers.laser_events import laser_events
 from event_handlers.measurement_events import meas_events
+from event_handlers.calib_events import calibration_events
 
 
 def event_handler(app, event, values):
@@ -19,9 +20,9 @@ def event_handler(app, event, values):
             value = values[event]
         except KeyError:
             value = None
-        # print(f'Event Group: {event_group}')
-        # print(f'Event : {event}')
-        # print(f'Event Value: {value}')
+        # print(f'Event Group: {event_group}.')
+        # print(f'Event : {event}.')
+        # print(f'Event Value: {value}.')
 
         if event_group == 'DDS':
             dds_events(app, event, values)
@@ -35,5 +36,12 @@ def event_handler(app, event, values):
         elif event_group == 'MEAS':
             meas_events(app, event, values)
 
-        elif event_group == 'LAS' or 'LASER':
+        elif event_group == 'LAS' or event_group == 'LASER':
             laser_events(app, event, values)
+            
+        elif event_group == "CAL":
+            calibration_events(app, event, values)
+            print("CAL Event")
+            
+        else:
+            print(f"Event group {event_group} is not recognized.")
